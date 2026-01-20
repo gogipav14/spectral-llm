@@ -7,7 +7,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 -->
 
-Research code for the paper **"[Paper Title Here]"** by [Author Names].
+Research code for the paper **"Differentiable Logic Synthesis: Spectral Coefficient Selection via
+Sinkhorn-Constrained Composition"** by Gorgi Pavlov.
 
 ## Overview
 
@@ -145,8 +146,8 @@ If you use this code in your research, please cite:
 
 ## Related Projects
 
-- **[spectralbit](https://github.com/YOUR_USERNAME/spectralbit)** - Production-ready Python package (`pip install spectralbit`)
-- **[spectral-llm-experiments](https://github.com/YOUR_USERNAME/spectral-llm-experiments)** - Historical development iterations (archived)
+- **[spectralbit](https://github.com/gogipav14/spectralbit)** - Production-ready Python package (`pip install spectralbit`)
+- **[spectral-llm-experiments](https://github.com/gogipav14/spectral-llm-experiments)** - Historical development iterations (archived)
 
 ## License
 
