@@ -1,0 +1,11 @@
+{
+  "benchmark": "exact_fwht_merged",
+  "n_max_achieved": 0,
+  "peak_throughput_coeffs_per_sec": 0,
+  "results": [],
+  "source_files": [
+    "/home/gogip/Spectral-LLM/boolean_fourier/phase5/results/fwht_n28_isolated.json"
+  ],
+  "timestamp": "2026-01-03T19:22:58.545892",
+  "notes": "n>=28 run in isolated processes to avoid allocator fragmentation"
+}

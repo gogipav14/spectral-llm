@@ -1,0 +1,86 @@
+{
+  "benchmark": "exact_fwht",
+  "device": "cuda:0",
+  "n_min": 10,
+  "n_max_achieved": 27,
+  "n_trials": 5,
+  "max_memory_limit_gb": 7.0,
+  "results": [
+    {
+      "n": 10,
+      "dim": 1024,
+      "backend": "gpu",
+      "mean_time_s": 0.00147,
+      "throughput_coeffs_per_sec": 696718.0,
+      "memory_mb": 0.004096
+    },
+    {
+      "n": 15,
+      "dim": 32768,
+      "backend": "gpu",
+      "mean_time_s": 0.00172,
+      "throughput_coeffs_per_sec": 19095868.0,
+      "memory_mb": 0.131072
+    },
+    {
+      "n": 20,
+      "dim": 1048576,
+      "backend": "gpu",
+      "mean_time_s": 0.00182,
+      "throughput_coeffs_per_sec": 576619648.0,
+      "memory_mb": 4.194304
+    },
+    {
+      "n": 23,
+      "dim": 8388608,
+      "backend": "gpu",
+      "mean_time_s": 0.00952,
+      "throughput_coeffs_per_sec": 881483136.0,
+      "memory_mb": 33.554432
+    },
+    {
+      "n": 25,
+      "dim": 33554432,
+      "backend": "gpu",
+      "mean_time_s": 0.02403,
+      "throughput_coeffs_per_sec": 1396585984.0,
+      "memory_mb": 134.217728
+    },
+    {
+      "n": 26,
+      "dim": 67108864,
+      "backend": "gpu",
+      "mean_time_s": 0.05091,
+      "throughput_coeffs_per_sec": 1318301056.0,
+      "memory_mb": 268.435456
+    },
+    {
+      "n": 27,
+      "dim": 134217728,
+      "backend": "gpu",
+      "mean_time_s": 0.08204,
+      "throughput_coeffs_per_sec": 1636028416.0,
+      "memory_mb": 536.870912
+    }
+  ],
+  "timestamp": "2026-01-03T19:12:29.943804",
+  "extended_results": {
+    "note": "n=28 achieved in isolated process with fresh JAX session (avoids allocator fragmentation from prior runs). Standard practice when benchmarking near VRAM limits.",
+    "n28_isolated_test": {
+      "n": 28,
+      "dim": 268435456,
+      "backend": "gpu",
+      "mean_time_s": 0.18533,
+      "times_ms": [185.1, 184.7, 186.1],
+      "throughput_coeffs_per_sec": 1448412776.0,
+      "memory_gb_theoretical": 1.07,
+      "settings": {
+        "XLA_PYTHON_CLIENT_PREALLOCATE": "false",
+        "XLA_PYTHON_CLIENT_MEM_FRACTION": "1.0",
+        "jax_enable_x64": false
+      },
+      "success": true,
+      "verified_timestamp": "2026-01-03T19:23:58"
+    }
+  }
+}

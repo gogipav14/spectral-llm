@@ -1,0 +1,191 @@
+{
+  "benchmark": "hierarchical_composition",
+  "method": "Composition from learned primitives (NOT spectral synthesis)",
+  "verification": "Randomized testing with confidence intervals",
+  "n_samples": 100000,
+  "results": {
+    "adder": [
+      {
+        "n_bits": 4,
+        "n_samples": 100000,
+        "n_total_comparisons": 500000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999940085354528,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.2881783689954318,
+        "reference_time_s": 0.09542674198746681
+      },
+      {
+        "n_bits": 8,
+        "n_samples": 100000,
+        "n_total_comparisons": 900000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.999996671408585,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.06960520398570225,
+        "reference_time_s": 0.09741463197860867
+      },
+      {
+        "n_bits": 16,
+        "n_samples": 100000,
+        "n_total_comparisons": 1700000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.999998237804545,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.08845464600017294,
+        "reference_time_s": 0.11613661498995498
+      },
+      {
+        "n_bits": 32,
+        "n_samples": 100000,
+        "n_total_comparisons": 3300000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999990922023414,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.0978426500223577,
+        "reference_time_s": 0.157426709018182
+      },
+      {
+        "n_bits": 64,
+        "n_samples": 100000,
+        "n_total_comparisons": 6500000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999995391181118,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.13639104802859947,
+        "reference_time_s": 1.6675131230149418
+      }
+    ],
+    "comparator": [
+      {
+        "n_bits": 4,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.11483607802074403,
+        "reference_time_s": 0.02222270000493154
+      },
+      {
+        "n_bits": 8,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.015904240019153804,
+        "reference_time_s": 0.018246213963720948
+      },
+      {
+        "n_bits": 16,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.024307243002112955,
+        "reference_time_s": 0.02699252200545743
+      },
+      {
+        "n_bits": 32,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.051376126997638494,
+        "reference_time_s": 0.044625029957387596
+      },
+      {
+        "n_bits": 64,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.1238422259921208,
+        "reference_time_s": 1.038752435008064
+      }
+    ],
+    "equality": [
+      {
+        "n_bits": 4,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.13480124797206372,
+        "reference_time_s": 0.008773960988037288
+      },
+      {
+        "n_bits": 8,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.03385420300764963,
+        "reference_time_s": 0.01300507498672232
+      },
+      {
+        "n_bits": 16,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.041260376980062574,
+        "reference_time_s": 0.016016023000702262
+      },
+      {
+        "n_bits": 32,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.051688151026610285,
+        "reference_time_s": 0.019334354030434042
+      },
+      {
+        "n_bits": 64,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.10457054199650884,
+        "reference_time_s": 0.06103407801128924
+      },
+      {
+        "n_bits": 128,
+        "n_samples": 100000,
+        "n_total_comparisons": 100000,
+        "n_errors": 0,
+        "accuracy": 1.0,
+        "accuracy_ci_low": 0.9999700426772644,
+        "accuracy_ci_high": 1.0,
+        "composed_time_s": 0.1718001090339385,
+        "reference_time_s": 0.11469360499177128
+      }
+    ]
+  },
+  "timestamp": "2026-01-03T18:42:06.567291"
+}

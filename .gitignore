@@ -1,0 +1,47 @@
+# Personal session state
+.claude/
+
+# Checkpoints (large binary files)
+checkpoints/
+checkpoints_*/
+**/checkpoints/
+*.pkl
+
+# Logs
+*.log
+*_stdout.log
+*_pid.txt
+training*.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Large data files (optional - decide based on hosting strategy)
+# Uncomment if you want to exclude datasets from version control
+# v5/data/preprocessed/
+# *.npy
+# *.arrow

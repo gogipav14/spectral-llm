@@ -1,0 +1,10 @@
+{
+  "benchmark": "exact_fwht",
+  "device": "cuda:0",
+  "n_min": 28,
+  "n_max_achieved": 0,
+  "n_trials": 5,
+  "max_memory_limit_gb": 10.0,
+  "results": [],
+  "timestamp": "2026-01-03T19:22:58.282468"
+}

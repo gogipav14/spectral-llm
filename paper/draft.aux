@@ -1,0 +1,239 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\citation{xie2024mhc}
+\citation{trask2018neural}
+\citation{dong2019neural}
+\citation{riegel2020logical}
+\citation{serafini2016learning}
+\citation{odonnell2014analysis}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\citation{linial1993constant}
+\citation{xie2024mhc}
+\citation{he2016identity}
+\citation{sinkhorn1967concerning}
+\citation{xie2024mhc}
+\@writefile{toc}{\contentsline {paragraph}{Boolean Fourier Analysis.}{2}{section*.1}\protected@file@percent }
+\newlabel{eq:fourier}{{1}{2}{Boolean Fourier Analysis}{equation.1.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Polynomial Threshold Representations.}{2}{section*.2}\protected@file@percent }
+\newlabel{eq:ptf}{{2}{2}{Polynomial Threshold Representations}{equation.1.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Connection to \textit  {m}HC.}{2}{section*.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Why Start with $n=2$?}{2}{section*.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{The Hardware Motivation.}{2}{section*.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Contributions.}{2}{section*.6}\protected@file@percent }
+\citation{xie2024mhc}
+\citation{zhu2024hc}
+\citation{sinkhorn1967concerning}
+\citation{cuturi2013sinkhorn}
+\citation{mena2018learning}
+\citation{sander2022sinkformers}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{3}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Manifold-Constrained Routing: The \textit  {m}HC{} Foundation}{3}{subsection.2.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Our Extension.}{3}{section*.7}\protected@file@percent }
+\citation{linial1993constant}
+\citation{kushilevitz1993learning}
+\citation{odonnell2014analysis}
+\citation{daniely2020learning}
+\citation{pan2021wht}
+\citation{trask2018neural}
+\citation{dong2019neural}
+\citation{riegel2020logical}
+\citation{petersen2022deep}
+\citation{courbariaux2016binarized}
+\citation{zhu2017trained}
+\citation{odonnell2014analysis}
+\citation{xie2024mhc}
+\@writefile{toc}{\contentsline {paragraph}{Related Optimal Transport Approaches.}{4}{section*.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Spectral Learning of Boolean Functions}{4}{subsection.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Neural Logic and Neuro-Symbolic Systems}{4}{subsection.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Quantization and Efficient Inference}{4}{subsection.2.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Preliminaries}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Boolean Fourier Analysis}{4}{subsection.3.1}\protected@file@percent }
+\newlabel{prop:completeness}{{1}{4}{Completeness}{proposition.1}{}}
+\citation{sinkhorn1967concerning}
+\citation{xie2024mhc}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Hierarchical Spectral Composition architecture. Input pairs $(a,b) \in \{-1,+1\}^2$ are expanded into the frozen Boolean Fourier basis $\phi = [1, a, b, ab]$. Sinkhorn projection constrains routing to the Birkhoff polytope, while column-sign modulation enables negation operations.}}{5}{figure.caption.9}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{5}{Hierarchical Spectral Composition architecture. Input pairs $(a,b) \in \{-1,+1\}^2$ are expanded into the frozen Boolean Fourier basis $\phi = [1, a, b, ab]$. Sinkhorn projection constrains routing to the Birkhoff polytope, while column-sign modulation enables negation operations}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}The Birkhoff Polytope and Sinkhorn Projection}{5}{subsection.3.2}\protected@file@percent }
+\newlabel{remark:rectangular}{{1}{5}{Rectangular Sinkhorn}{remark.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Method: Hierarchical Spectral Composition}{5}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Phase 1: Spectral Coefficient Selection}{5}{subsection.4.1}\protected@file@percent }
+\newlabel{sec:phase1}{{4.1}{5}{Phase 1: Spectral Coefficient Selection}{subsection.4.1}{}}
+\citation{odonnell2014analysis}
+\citation{jang2017categorical}
+\citation{maddison2017concrete}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.1}Architecture}{6}{subsubsection.4.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.2}The Dynamics of Parity Selection}{6}{subsubsection.4.1.2}\protected@file@percent }
+\newlabel{prop:parity}{{2}{6}{Parity Gradient Accumulation}{proposition.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.3}Optimization Scaffolding}{6}{subsubsection.4.1.3}\protected@file@percent }
+\newlabel{remark:selection}{{2}{6}{``Selection'' vs. ``Discovery''}{remark.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.4}Training Methodology: Gumbel-Softmax Ternary Relaxation}{6}{subsubsection.4.1.4}\protected@file@percent }
+\newlabel{sec:phase1_training}{{4.1.4}{6}{Training Methodology: Gumbel-Softmax Ternary Relaxation}{subsubsection.4.1.4}{}}
+\@writefile{toc}{\contentsline {paragraph}{Gumbel-Softmax Parameterization.}{6}{section*.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sequential Training Protocol.}{7}{section*.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ternary Attractor Regularization.}{7}{section*.12}\protected@file@percent }
+\newlabel{box:encoding}{{4.1.4}{7}{Ternary Attractor Regularization}{equation.4.10}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.5}Validation Suite}{7}{subsubsection.4.1.5}\protected@file@percent }
+\newlabel{sec:phase1_validation}{{4.1.5}{7}{Validation Suite}{subsubsection.4.1.5}{}}
+\citation{xie2024mhc}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Phase 1 Learned Ternary Masks ($n=2$). All four operations achieve 100\% accuracy. Encoding: $-1 = \text  {TRUE}$, $+1 = \text  {FALSE}$.}}{8}{table.caption.13}\protected@file@percent }
+\newlabel{tab:phase1_masks}{{1}{8}{Phase 1 Learned Ternary Masks ($n=2$). All four operations achieve 100\% accuracy. Encoding: $-1 = \text {TRUE}$, $+1 = \text {FALSE}$}{table.caption.13}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.1.6}Phase 1 Results}{8}{subsubsection.4.1.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Training Dynamics.}{8}{section*.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Validation Results.}{8}{section*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Phase 2: Sinkhorn-Constrained Composition with Column-Sign Modulation}{8}{subsection.4.2}\protected@file@percent }
+\newlabel{sec:phase2}{{4.2}{8}{Phase 2: Sinkhorn-Constrained Composition with Column-Sign Modulation}{subsection.4.2}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.1}The Expressivity Problem: Why Standard \textit  {m}HC{} Is Insufficient}{8}{subsubsection.4.2.1}\protected@file@percent }
+\newlabel{prop:negation}{{3}{8}{Negation Inaccessibility in Doubly Stochastic Routing}{proposition.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Phase 1 training dynamics for all four base operations. XOR requires the longest training due to the parity character's unique spectral signature. AND and OR converge in $<500$ steps due to their simpler affine structure.}}{9}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:phase1_training}{{2}{9}{Phase 1 training dynamics for all four base operations. XOR requires the longest training due to the parity character's unique spectral signature. AND and OR converge in $<500$ steps due to their simpler affine structure}{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.2}Column-Sign Modulation: Extending \textit  {m}HC}{9}{subsubsection.4.2.2}\protected@file@percent }
+\citation{xie2024mhc}
+\citation{he2016identity}
+\citation{xie2024mhc}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces XOR parity emergence: the $|c_{ab}|$ coefficient grows from noise to 1.0 while other coefficients ($|c_1|$, $|c_a|$, $|c_b|$) decay to zero. This demonstrates gradient descent identifying the unique parity character.}}{10}{figure.caption.16}\protected@file@percent }
+\newlabel{fig:xor_emergence}{{3}{10}{XOR parity emergence: the $|c_{ab}|$ coefficient grows from noise to 1.0 while other coefficients ($|c_1|$, $|c_a|$, $|c_b|$) decay to zero. This demonstrates gradient descent identifying the unique parity character}{figure.caption.16}{}}
+\@writefile{toc}{\contentsline {paragraph}{Sign Learning.}{10}{section*.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.2.3}Identity Initialization: Adapting \textit  {m}HC{} Insights}{10}{subsubsection.4.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Empirical Motivation for Identity Initialization.}{10}{section*.19}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Phase 2A: Linear Operations (8 ops, 10 seeds). All metrics achieve perfect scores.}}{11}{table.caption.21}\protected@file@percent }
+\newlabel{tab:phase2a}{{2}{11}{Phase 2A: Linear Operations (8 ops, 10 seeds). All metrics achieve perfect scores}{table.caption.21}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Quantization: From Soft to Hard Routing}{11}{subsection.4.3}\protected@file@percent }
+\newlabel{sec:quantization}{{4.3}{11}{Quantization: From Soft to Hard Routing}{subsection.4.3}{}}
+\@writefile{toc}{\contentsline {paragraph}{Quantization Statistics.}{11}{section*.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Phase 2A Validation: Linear Operations}{11}{subsubsection.4.3.1}\protected@file@percent }
+\newlabel{sec:phase2a_validation}{{4.3.1}{11}{Phase 2A Validation: Linear Operations}{subsubsection.4.3.1}{}}
+\@writefile{toc}{\contentsline {paragraph}{Validation Metrics (10 seeds):}{11}{section*.22}\protected@file@percent }
+\citation{xie2024mhc}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Phase 2 routing visualization. Left: Sinkhorn-constrained $P$ learns identity routing. Middle: Column-sign $s$ enables negation (ops 4-7). Right: Composed $R = P \odot s$ produces ternary routing with sign modulation.}}{12}{figure.caption.23}\protected@file@percent }
+\newlabel{fig:phase2_routing}{{4}{12}{Phase 2 routing visualization. Left: Sinkhorn-constrained $P$ learns identity routing. Middle: Column-sign $s$ enables negation (ops 4-7). Right: Composed $R = P \odot s$ produces ternary routing with sign modulation}{figure.caption.23}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Phase 2: Nonlinear Operations (8 ops). Each has a valid ternary mask but requires direct learning, not routing.}}{12}{table.caption.24}\protected@file@percent }
+\newlabel{tab:phase2_nonlinear}{{3}{12}{Phase 2: Nonlinear Operations (8 ops). Each has a valid ternary mask but requires direct learning, not routing}{table.caption.24}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.2}Phase 2 Full: All 16 Operations Analysis}{12}{subsubsection.4.3.2}\protected@file@percent }
+\newlabel{sec:phase2_full}{{4.3.2}{12}{Phase 2 Full: All 16 Operations Analysis}{subsubsection.4.3.2}{}}
+\@writefile{toc}{\contentsline {paragraph}{Key Finding: Routing Expressibility Boundary.}{12}{section*.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sparsity Analysis.}{12}{section*.26}\protected@file@percent }
+\citation{xie2024mhc}
+\@writefile{lot}{\contentsline {table}{\numberline {4}{\ignorespaces Phase 2 Validation Results ($n=2$, 10 Seeds). The ``No Sign Mod.'' ablation corresponds to pure \textit  {m}HC-style doubly stochastic routing, which caps at 75\% (12/16 operations)---confirming Proposition~\ref {prop:negation}.}}{13}{table.caption.29}\protected@file@percent }
+\newlabel{tab:main_results}{{4}{13}{Phase 2 Validation Results ($n=2$, 10 Seeds). The ``No Sign Mod.'' ablation corresponds to pure \mHC -style doubly stochastic routing, which caps at 75\% (12/16 operations)---confirming Proposition~\ref {prop:negation}}{table.caption.29}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Experiments}{13}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Experimental Setup}{13}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Implementation.}{13}{section*.27}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Ablation Testing Protocol.}{13}{section*.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Phase 2 Results ($n=2$): Architecture Validation}{13}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Diagnostic: Sign-Only Learning.}{13}{section*.30}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Interpreting Ablation Results.}{13}{section*.31}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces Ternary Masks for All 16 Boolean Operations ($n=2$). Encoding: $-1 = \text  {TRUE}$, $+1 = \text  {FALSE}$. Each mask yields the correct truth table: $f(a,b) = \text  {sign}(c_0 + c_a \cdot a + c_b \cdot b + c_{ab} \cdot ab)$.}}{14}{table.caption.32}\protected@file@percent }
+\newlabel{tab:ternary}{{5}{14}{Ternary Masks for All 16 Boolean Operations ($n=2$). Encoding: $-1 = \text {TRUE}$, $+1 = \text {FALSE}$. Each mask yields the correct truth table: $f(a,b) = \sign (c_0 + c_a \cdot a + c_b \cdot b + c_{ab} \cdot ab)$}{table.caption.32}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Constructive Ternary Representability ($n=2$)}{14}{subsection.5.3}\protected@file@percent }
+\newlabel{thm:ternary}{{1}{14}{Ternary Representability for $n=2$}{theorem.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Phase 3: Three-Variable Operations ($n=3$)}{14}{section.6}\protected@file@percent }
+\newlabel{sec:phase3}{{6}{14}{Phase 3: Three-Variable Operations ($n=3$)}{section.6}{}}
+\citation{linial1993constant}
+\@writefile{lot}{\contentsline {table}{\numberline {6}{\ignorespaces Phase 3 Results Summary ($n=3$, 5 Seeds)}}{15}{table.caption.36}\protected@file@percent }
+\newlabel{tab:phase3_summary}{{6}{15}{Phase 3 Results Summary ($n=3$, 5 Seeds)}{table.caption.36}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Architecture and Target Operations}{15}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Representability Analysis}{15}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Exhaustive Enumeration.}{15}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Finding: Universal Representability.}{15}{section*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Learning vs. Optimal.}{15}{section*.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Results}{15}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Observations.}{15}{section*.38}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {7}{\ignorespaces Phase 3 Ternary Masks (8-dimensional basis). All 10 operations achieve 100\% accuracy. Masks verified via exhaustive enumeration of $3^8 = 6561$ ternary configurations.}}{16}{table.caption.37}\protected@file@percent }
+\newlabel{tab:phase3_masks}{{7}{16}{Phase 3 Ternary Masks (8-dimensional basis). All 10 operations achieve 100\% accuracy. Masks verified via exhaustive enumeration of $3^8 = 6561$ ternary configurations}{table.caption.37}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {8}{\ignorespaces Inference Throughput (Phase 3, batch=100,000, bits=64). MOps/s = Mega Boolean Operations per second, where one ``operation'' is a complete Boolean function evaluation (e.g., computing AND$(a,b)$ for one input pair).}}{16}{table.caption.40}\protected@file@percent }
+\newlabel{tab:benchmark}{{8}{16}{Inference Throughput (Phase 3, batch=100,000, bits=64). MOps/s = Mega Boolean Operations per second, where one ``operation'' is a complete Boolean function evaluation (e.g., computing AND$(a,b)$ for one input pair)}{table.caption.40}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Benchmark Performance}{16}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Throughput Definition.}{16}{section*.41}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Phase 3 optimal ternary masks for all 10 three-variable operations. Colors indicate coefficient values: blue (+1), white (0), red (-1). Pure 3-var operations (top) vs. cascade compositions (bottom). The sparsity pattern (39\% zeros) reflects spectral concentration.}}{17}{figure.caption.39}\protected@file@percent }
+\newlabel{fig:phase3_heatmap}{{5}{17}{Phase 3 optimal ternary masks for all 10 three-variable operations. Colors indicate coefficient values: blue (+1), white (0), red (-1). Pure 3-var operations (top) vs. cascade compositions (bottom). The sparsity pattern (39\% zeros) reflects spectral concentration}{figure.caption.39}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {7}Phase 4: Four-Variable Operations ($n=4$)}{17}{section.7}\protected@file@percent }
+\newlabel{sec:phase4}{{7}{17}{Phase 4: Four-Variable Operations ($n=4$)}{section.7}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Architecture and Basis}{17}{subsection.7.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Spectral Synthesis Method}{17}{subsection.7.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Stage 1: Exact Walsh-Hadamard Transform.}{17}{section*.42}\protected@file@percent }
+\citation{swendsen1986replica}
+\@writefile{toc}{\contentsline {paragraph}{Stage 2: Ternary Quantization.}{18}{section*.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Stage 3: MCMC Refinement via Parallel Tempering.}{18}{section*.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.3}Target Operations}{18}{subsection.7.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.4}Results}{18}{subsection.7.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Observations.}{18}{section*.47}\protected@file@percent }
+\citation{kushilevitz1993learning}
+\citation{xie2024mhc}
+\citation{xie2024mhc}
+\@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Phase 4 Results Summary ($n=4$, 5 Seeds)}}{19}{table.caption.45}\protected@file@percent }
+\newlabel{tab:phase4_summary}{{9}{19}{Phase 4 Results Summary ($n=4$, 5 Seeds)}{table.caption.45}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces Phase 4 Ternary Masks (16-dimensional basis). All 10 operations achieve 100\% accuracy via spectral synthesis. Basis: $[1, d, c, cd, b, bd, bc, bcd, a, ad, ac, acd, ab, abd, abc, abcd]$.}}{19}{table.caption.46}\protected@file@percent }
+\newlabel{tab:phase4_masks}{{10}{19}{Phase 4 Ternary Masks (16-dimensional basis). All 10 operations achieve 100\% accuracy via spectral synthesis. Basis: $[1, d, c, cd, b, bd, bc, bcd, a, ad, ac, acd, ab, abd, abc, abcd]$}{table.caption.46}{}}
+\newlabel{cor:sparsity}{{1}{19}{Spectral Sparsity at Scale}{corollary.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Discussion}{19}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Relationship to \textit  {m}HC: Similarities and Differences}{19}{subsection.8.1}\protected@file@percent }
+\citation{linial1993constant}
+\citation{kushilevitz1993learning}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Phase 4 synthesized ternary masks for all 10 four-variable operations. Colors indicate coefficient values: blue (+1), white (0), red (-1). Pure 4-var operations (top) vs. cascade compositions (bottom). XOR operations exhibit maximum sparsity (support=1).}}{20}{figure.caption.48}\protected@file@percent }
+\newlabel{fig:phase4_heatmap}{{6}{20}{Phase 4 synthesized ternary masks for all 10 four-variable operations. Colors indicate coefficient values: blue (+1), white (0), red (-1). Pure 4-var operations (top) vs. cascade compositions (bottom). XOR operations exhibit maximum sparsity (support=1)}{figure.caption.48}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Spectral synthesis pipeline for Phase 4. Stage 1: Exact Walsh-Hadamard Transform for coefficient computation. Stage 2: Ternary quantization. Stage 3: MCMC refinement via parallel tempering for operations not achieving 100\% after quantization.}}{20}{figure.caption.49}\protected@file@percent }
+\newlabel{fig:phase4_pipeline}{{7}{20}{Spectral synthesis pipeline for Phase 4. Stage 1: Exact Walsh-Hadamard Transform for coefficient computation. Stage 2: Ternary quantization. Stage 3: MCMC refinement via parallel tempering for operations not achieving 100\% after quantization}{figure.caption.49}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Scaling Analysis}{20}{subsection.8.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Hardware Deployment}{20}{subsection.8.3}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {11}{\ignorespaces Comparison with \textit  {m}HC{} \cite  {xie2024mhc}. Our work adapts \textit  {m}HC's stability mechanisms to a new domain while adding column-sign modulation for Boolean expressivity.}}{21}{table.caption.50}\protected@file@percent }
+\newlabel{tab:mhc_comparison}{{11}{21}{Comparison with \mHC {} \cite {xie2024mhc}. Our work adapts \mHC 's stability mechanisms to a new domain while adding column-sign modulation for Boolean expressivity}{table.caption.50}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Scaling Across Phases. All phases achieve 100\% accuracy. Sparsity varies based on operation complexity.}}{21}{table.caption.51}\protected@file@percent }
+\newlabel{tab:scaling}{{12}{21}{Scaling Across Phases. All phases achieve 100\% accuracy. Sparsity varies based on operation complexity}{table.caption.51}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Phase 5: Scalable Spectral Methods}{21}{section.9}\protected@file@percent }
+\newlabel{sec:phase5}{{9}{21}{Phase 5: Scalable Spectral Methods}{section.9}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.1}Track 1: Exact FWHT (Moderate $n$)}{21}{subsection.9.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Key Result.}{21}{section*.54}\protected@file@percent }
+\citation{linial1993constant}
+\citation{goldreich1989hard}
+\citation{kushilevitz1993learning}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Spectral sparsity across phases. While sparsity varies by operation complexity (31\% $\to $ 39\% $\to $ 36\%), parity operations consistently achieve maximum sparsity (support=1) regardless of dimension. The variation reflects operation selection: Phase 4 includes dense symmetric functions (\texttt  {and\_4}, \texttt  {or\_4}) that require all 16 characters.}}{22}{figure.caption.52}\protected@file@percent }
+\newlabel{fig:sparsity}{{8}{22}{Spectral sparsity across phases. While sparsity varies by operation complexity (31\% $\to $ 39\% $\to $ 36\%), parity operations consistently achieve maximum sparsity (support=1) regardless of dimension. The variation reflects operation selection: Phase 4 includes dense symmetric functions (\texttt {and\_4}, \texttt {or\_4}) that require all 16 characters}{figure.caption.52}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces Exact FWHT Benchmark (GPU, RTX 5060 8GB). Peak throughput of 1.64B coefficients/sec achieved at $n=27$. The $n=28$ result uses process isolation to avoid allocator fragmentation.}}{22}{table.caption.53}\protected@file@percent }
+\newlabel{tab:fwht}{{13}{22}{Exact FWHT Benchmark (GPU, RTX 5060 8GB). Peak throughput of 1.64B coefficients/sec achieved at $n=27$. The $n=28$ result uses process isolation to avoid allocator fragmentation}{table.caption.53}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.2}Track 2: Coefficient Estimation (Large $n$)}{22}{subsection.9.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Search Strategy.}{22}{section*.55}\protected@file@percent }
+\citation{kushilevitz1993learning}
+\citation{xie2024mhc}
+\@writefile{toc}{\contentsline {paragraph}{Honest Assessment.}{23}{section*.56}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {9.3}Track 3: Hierarchical Composition}{23}{subsection.9.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Approach.}{23}{section*.57}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {14}{\ignorespaces Hierarchical Circuit Composition. All circuits achieve 100\% accuracy. Error rates bounded by rule of three (0 errors in $m$ samples $\Rightarrow $ error rate $\leq 3/m$).}}{23}{table.caption.58}\protected@file@percent }
+\newlabel{tab:composition}{{14}{23}{Hierarchical Circuit Composition. All circuits achieve 100\% accuracy. Error rates bounded by rule of three (0 errors in $m$ samples $\Rightarrow $ error rate $\leq 3/m$)}{table.caption.58}{}}
+\@writefile{toc}{\contentsline {paragraph}{Key Claim.}{23}{section*.59}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Future Work}{23}{section.10}\protected@file@percent }
+\newlabel{sec:future}{{10}{23}{Future Work}{section.10}{}}
+\bibstyle{plain}
+\bibcite{xie2024mhc}{1}
+\bibcite{zhu2024hc}{2}
+\bibcite{odonnell2014analysis}{3}
+\bibcite{linial1993constant}{4}
+\bibcite{kushilevitz1993learning}{5}
+\bibcite{goldreich1989hard}{6}
+\bibcite{cuturi2013sinkhorn}{7}
+\bibcite{sinkhorn1967concerning}{8}
+\bibcite{mena2018learning}{9}
+\bibcite{sander2022sinkformers}{10}
+\@writefile{toc}{\contentsline {section}{\numberline {11}Conclusion}{24}{section.11}\protected@file@percent }
+\bibcite{trask2018neural}{11}
+\bibcite{dong2019neural}{12}
+\bibcite{serafini2016learning}{13}
+\bibcite{riegel2020logical}{14}
+\bibcite{petersen2022deep}{15}
+\bibcite{daniely2020learning}{16}
+\bibcite{pan2021wht}{17}
+\bibcite{courbariaux2016binarized}{18}
+\bibcite{zhu2017trained}{19}
+\bibcite{jang2017categorical}{20}
+\bibcite{maddison2017concrete}{21}
+\bibcite{he2016identity}{22}
+\bibcite{swendsen1986replica}{23}
+\citation{xie2024mhc}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Implementation Details}{25}{appendix.A}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Sinkhorn Iterations.}{25}{section*.61}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Temperature Annealing.}{25}{section*.62}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Plateau Detection.}{26}{section*.63}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {B}Reproducibility}{26}{appendix.B}\protected@file@percent }
+\gdef \@abspage@last{26}

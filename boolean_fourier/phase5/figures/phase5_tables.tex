@@ -1,0 +1,50 @@
+% Phase 5 Benchmark Summary Table
+% Generated from actual benchmark runs
+% Generated: 2026-01-03T19:07:49.177092
+
+\begin{table}[h]
+\centering
+\caption{Exact FWHT Benchmark Results}
+\begin{tabular}{rrrr}
+\toprule
+$n$ & Dimension & Time (ms) & Throughput (M/s) \\
+\midrule
+10 & 1,024 & 1.46 & 0.7 \\
+11 & 2,048 & 1.71 & 1.2 \\
+12 & 4,096 & 1.52 & 2.7 \\
+13 & 8,192 & 2.79 & 2.9 \\
+14 & 16,384 & 1.81 & 9.0 \\
+15 & 32,768 & 2.47 & 13.3 \\
+16 & 65,536 & 1.90 & 34.5 \\
+17 & 131,072 & 2.18 & 60.0 \\
+18 & 262,144 & 2.55 & 102.7 \\
+19 & 524,288 & 1.80 & 290.6 \\
+20 & 1,048,576 & 2.69 & 389.1 \\
+21 & 2,097,152 & 5.81 & 360.7 \\
+22 & 4,194,304 & 19.13 & 219.2 \\
+23 & 8,388,608 & 9.48 & 884.7 \\
+24 & 16,777,216 & 21.85 & 768.0 \\
+25 & 33,554,432 & 27.73 & 1210.1 \\
+26 & 67,108,864 & 47.76 & 1405.3 \\
+27 & 134,217,728 & 82.04 & 1636.0 \\
+\bottomrule
+\end{tabular}
+\label{tab:fwht-benchmark}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Hierarchical Circuit Composition Results}
+\begin{tabular}{lrrr}
+\toprule
+Circuit & Bits & Accuracy & 95\% CI \\
+\midrule
+Adder & 4 & 1.0000 & [1.0000, 1.0000] \\
+Adder & 8 & 1.0000 & [1.0000, 1.0000] \\
+Adder & 16 & 1.0000 & [1.0000, 1.0000] \\
+Adder & 32 & 1.0000 & [1.0000, 1.0000] \\
+Adder & 64 & 1.0000 & [1.0000, 1.0000] \\
+\bottomrule
+\end{tabular}
+\label{tab:circuit-composition}
+\end{table}

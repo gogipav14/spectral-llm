@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "[Your Last Name]"
+    given-names: "[Your First Name]"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"  # Optional - add your ORCID if available
+title: "Spectral-LLM: Boolean Fourier Logic with Differentiable Routing"
+version: 1.0.0
+# doi: 10.5281/zenodo.XXXXXXX  # Add after Zenodo registration
+date-released: 2025-01-19
+url: "https://github.com/[YOUR_USERNAME]/spectral-llm"
+repository-code: "https://github.com/[YOUR_USERNAME]/spectral-llm"
+keywords:
+  - boolean logic
+  - spectral analysis
+  - differentiable programming
+  - JAX
+  - Walsh-Hadamard transform
+  - logic synthesis
+  - ternary networks
+license: MIT
