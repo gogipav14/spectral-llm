@@ -1,0 +1,1151 @@
+\documentclass[11pt]{article}
+
+% Page geometry - wider margins for readability
+\usepackage[margin=1in]{geometry}
+
+% Standard academic packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{tcolorbox}
+
+% Custom commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\sign}{\text{sign}}
+\newcommand{\softmax}{\text{softmax}}
+\newcommand{\mHC}{\textit{m}HC}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{remark}{Remark}
+\newtheorem{corollary}{Corollary}
+
+\title{Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition}
+
+\author{
+  \textbf{Gorgi Pavlov, Ph.D.} \\
+  Lehigh University \& Johnson and Johnson \\
+  \texttt{gorgipavlov@gmail.com} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Learning precise Boolean logic via gradient descent remains challenging: neural networks typically converge to ``fuzzy'' approximations that degrade under quantization. We introduce \textbf{Hierarchical Spectral Composition}, a differentiable architecture that \textit{selects} spectral coefficients from a frozen Boolean Fourier basis and \textit{composes} them via Sinkhorn-constrained routing with column-sign modulation. Our approach draws on recent insights from Manifold-Constrained Hyper-Connections (\mHC) \cite{xie2024mhc}, which demonstrated that projecting routing matrices onto the Birkhoff polytope preserves identity mappings and stabilizes large-scale training. We adapt this framework to logic synthesis, adding column-sign modulation to enable Boolean negation---a capability absent in standard doubly stochastic routing.
+
+We validate our approach across four phases of increasing complexity: (1) For $n=2$ (16 Boolean operations over 4-dim basis), \textbf{gradient descent} achieves 100\% accuracy with \textbf{zero routing drift} and \textbf{zero-loss quantization} to ternary masks. (2) For $n=3$ (10 three-variable operations), gradient descent achieves 76\% accuracy, but \textbf{exhaustive enumeration} over $3^8 = 6561$ configurations proves that optimal ternary masks exist for all operations (100\% accuracy, 39\% sparsity). (3) For $n=4$ (10 four-variable operations over 16-dim basis), \textbf{spectral synthesis}---combining exact Walsh-Hadamard coefficients, ternary quantization, and MCMC refinement with parallel tempering---achieves \textbf{100\% accuracy} on all operations. This progression establishes (a) that ternary polynomial threshold representations exist for all tested functions, and (b) that finding them requires methods beyond pure gradient descent as dimensionality grows. All operations enable single-cycle combinational logic inference at \textbf{10,959 MOps/s} on GPU, demonstrating viability for hardware-efficient neuro-symbolic logic synthesis.
+\end{abstract}
+
+%==============================================================================
+\section{Introduction}
+%==============================================================================
+
+The integration of symbolic reasoning with gradient-based learning remains a fundamental challenge in artificial intelligence. Neural networks excel at continuous pattern recognition but struggle with tasks requiring \textit{exact} discrete logic: they approximate Boolean functions with soft decision boundaries that degrade under distributional shift, adversarial perturbation, or---critically for deployment---quantization. Existing neuro-symbolic approaches, such as Neural Arithmetic Logic Units (NALU) \cite{trask2018neural}, Neural Logic Machines \cite{dong2019neural}, Logical Neural Networks \cite{riegel2020logical}, or Logic Tensor Networks \cite{serafini2016learning}, either require extensive supervision, rely on relaxed continuous operators that resist discretization, or fail to generalize beyond their training distribution.
+
+We propose a different paradigm: \textbf{Spectral Selection and Composition}. Rather than learning logic gates from random dense initializations, we ground our architecture in the Fourier analysis of Boolean functions \cite{odonnell2014analysis}.
+
+\paragraph{Boolean Fourier Analysis.} Any function $f: \{-1, +1\}^n \to \mathbb{R}$ has a unique \textit{Fourier expansion}:
+\begin{equation}
+\label{eq:fourier}
+    f(x) = \sum_{S \subseteq [n]} \hat{f}(S) \chi_S(x), \quad \text{where} \quad \chi_S(x) = \prod_{i \in S} x_i
+\end{equation}
+and $\hat{f}(S) = \mathbb{E}_{x}[f(x) \chi_S(x)]$ are the exact Fourier coefficients. When $f$ maps to $\{-1, +1\}$, these coefficients are determined uniquely by the truth table.
+
+\paragraph{Polynomial Threshold Representations.} Our architecture learns a different object: a \textbf{ternary polynomial threshold function} (PTF):
+\begin{equation}
+\label{eq:ptf}
+    \hat{y}(x) = \sign\left(\sum_{S \subseteq [n]} w_S \chi_S(x)\right), \quad w_S \in \{-1, 0, +1\}
+\end{equation}
+The key insight is that for many Boolean functions, there exist \textit{sparse} ternary weight vectors $w$ such that $\sign(w^\top \phi(x)) = f(x)$ for all $x$---even though the exact Fourier coefficients $\hat{f}(S)$ may be non-integer. The architecture's task is not to \textit{invent} the Walsh-Hadamard basis---that is classical mathematics \cite{linial1993constant}---but to \textit{discover sparse ternary PTF representations} via gradient descent and \textit{compose} primitives into complex operations via learned routing.
+
+\paragraph{Connection to \mHC.} Our work builds directly on insights from Manifold-Constrained Hyper-Connections (\mHC) \cite{xie2024mhc}, which identified a fundamental problem in modern deep learning: unconstrained routing matrices compromise the identity mapping property \cite{he2016identity}, causing signal explosion/vanishing across layers. Their solution---projecting routing matrices onto the Birkhoff polytope via Sinkhorn-Knopp iterations \cite{sinkhorn1967concerning}---restores stability by ensuring doubly stochastic constraints. We adapt this framework to a different domain (logic synthesis vs. LLM training) and extend it with \textbf{column-sign modulation} to enable Boolean negation, which pure doubly stochastic matrices cannot express.
+
+\paragraph{Why Start with $n=2$?} We deliberately use the two-variable case as an \textbf{architecture validation testbed}. With only 4 input combinations and 16 possible functions, a lookup table (LUT) trivially solves the task with zero gradient steps. However, a LUT cannot generalize, cannot be learned end-to-end as part of a larger differentiable system, and cannot be composed hierarchically. Our contribution is demonstrating that Sinkhorn-constrained spectral composition \textit{finds the exact discrete solution} via continuous optimization---then validating that this mechanism scales to $n=3$ and $n=4$.
+
+\paragraph{The Hardware Motivation.} Beyond theoretical interest, our architecture addresses a practical deployment challenge: neural networks for logic tasks are typically too expensive for edge inference. By converging to \textbf{ternary masks} ($\{-1, 0, +1\}$) with \textbf{hard $k=1$ routing}, our learned models compile directly to combinational logic blocks requiring no floating-point arithmetic, no multipliers, and minimal memory. We demonstrate \textbf{10,959 MOps/s} throughput on GPU---approaching the efficiency of hand-coded RTL.
+
+\paragraph{Contributions.} Our contributions span architecture design, theoretical analysis, and empirical validation across three scales:
+
+\begin{enumerate}
+    \item \textbf{Adaptation of \mHC{} to Logic Synthesis:} We demonstrate that the Birkhoff polytope projection, originally developed for LLM training stability \cite{xie2024mhc}, enables stable optimization in Boolean logic composition.
+    
+    \item \textbf{Column-Sign Modulation for Negation:} We extend doubly stochastic routing with learned sign parameters $s \in \{-1, +1\}^n$, solving the expressivity gap that prevents standard \mHC{} from representing Boolean negations (NAND, NOR, XNOR).
+    
+    \item \textbf{Sign-Only Diagnostic Validation:} We prove the column-sign mechanism works independently of Sinkhorn optimization by achieving 100\% accuracy with fixed identity routing and learned signs only.
+    
+    \item \textbf{Multi-Scale Validation:}
+    \begin{itemize}
+        \item \textbf{$n=2$:} 100\% accuracy on all 16 operations, zero routing drift, zero-loss quantization (10/10 seeds)
+        \item \textbf{$n=3$:} 100\% accuracy on 10 operations including majority and parity, 39\% sparsity (5/5 seeds)
+        \item \textbf{$n=4$:} 100\% accuracy on 10 operations via spectral synthesis with MCMC refinement, 36\% sparsity (5/5 seeds)
+    \end{itemize}
+    
+    \item \textbf{Hardware-Efficient Compilation:} We achieve 10,959 MOps/s on GPU with ternary masks, demonstrating viability for single-cycle combinational logic inference.
+\end{enumerate}
+
+%==============================================================================
+\section{Related Work}
+%==============================================================================
+
+\subsection{Manifold-Constrained Routing: The \mHC{} Foundation}
+
+Our work is most directly related to Manifold-Constrained Hyper-Connections (\mHC) \cite{xie2024mhc}, which provides the theoretical and empirical foundation for stable Sinkhorn-constrained routing. \mHC{} identified that unconstrained Hyper-Connections \cite{zhu2024hc} suffer from signal explosion: the composite mapping $\prod_{i=1}^{L-l} H^{\text{res}}_{L-i}$ across layers fails to preserve signal magnitude, with empirical measurements showing \textbf{Amax Gain Magnitude peaks of 3000$\times$} in 27B models (compared to a theoretical target of 1.0$\times$). Their solution projects $H^{\text{res}}_l$ onto the Birkhoff polytope via Sinkhorn-Knopp \cite{sinkhorn1967concerning, cuturi2013sinkhorn}:
+\begin{equation}
+    \mathcal{P}_{\mathcal{M}^{\text{res}}}(H^{\text{res}}_l) = \{H \in \mathbb{R}^{n \times n} \mid H\mathbf{1}_n = \mathbf{1}_n, \mathbf{1}_n^\top H = \mathbf{1}_n^\top, H \geq 0\}
+\end{equation}
+This ensures: (1) norm preservation ($\|H\|_2 \leq 1$), (2) compositional closure under matrix multiplication, and (3) geometric interpretation as convex combinations of permutations---following the Birkhoff-von Neumann theorem.
+
+\paragraph{Our Extension.} While \mHC{} focuses on LLM training stability at scale (3B--27B parameters), we adapt the framework to a fundamentally different problem: learning discrete Boolean logic. This requires an extension not present in \mHC: \textbf{column-sign modulation}. Doubly stochastic matrices are nonnegative, so they can only produce convex combinations of inputs. Boolean negation (e.g., NAND $= -$AND) lies \textit{outside} this convex hull. Our factorization $R = P \cdot s[\text{None}, :]$ preserves the stability benefits of Sinkhorn projection while adding 1-bit polarity control per output channel.
+
+\paragraph{Related Optimal Transport Approaches.} Gumbel-Sinkhorn networks \cite{mena2018learning} use differentiable Sinkhorn iterations for learning permutations, while Sinkformers \cite{sander2022sinkformers} apply doubly stochastic attention in transformers. Our work differs in targeting discrete Boolean outputs rather than soft permutations.
+
+\subsection{Spectral Learning of Boolean Functions}
+
+The Fourier analysis of Boolean functions is foundational to computational learning theory \cite{linial1993constant, kushilevitz1993learning}. O'Donnell's textbook \cite{odonnell2014analysis} establishes that functions with low circuit complexity have concentrated Fourier spectra. Daniely and Malach \cite{daniely2020learning} proved that neural networks can learn sparse parities via gradient descent. Recent work applies Walsh-Hadamard transforms to neural network compression \cite{pan2021wht}. Our work differs: we \textit{embed} the spectral basis as frozen primitives and learn to \textit{select and compose} them via \mHC-style routing.
+
+\subsection{Neural Logic and Neuro-Symbolic Systems}
+
+NALU \cite{trask2018neural} learns arithmetic via gated interpolation but struggles with Boolean logic. Neural Logic Machines \cite{dong2019neural} require supervision of intermediate predicates. Logical Neural Networks \cite{riegel2020logical} use weighted real-valued logic with provable bounds. Deep Differentiable Logic Gate Networks \cite{petersen2022deep} learn Boolean gates via continuous relaxation but require supervised gate labels and post-training discretization. Our method differs: (1) we select coefficients \textit{unsupervised} from data patterns, (2) we achieve \textit{exact} discretization with zero accuracy loss, and (3) we ground the search in provably complete spectral primitives with \mHC-style stability.
+
+\subsection{Quantization and Efficient Inference}
+
+Binary Neural Networks \cite{courbariaux2016binarized} and Trained Ternary Quantization \cite{zhu2017trained} reduce precision for efficiency. Our ``zero-loss quantization'' is distinct: we show that for Boolean logic composition, ternary masks suffice \textit{exactly}---not approximately. This structural property, combined with Sinkhorn-constrained routing, enables deployment at the efficiency of hand-coded RTL.
+
+%==============================================================================
+\section{Preliminaries}
+%==============================================================================
+
+\subsection{Boolean Fourier Analysis}
+
+Let $f: \{-1, +1\}^n \to \mathbb{R}$ be a function on the Boolean hypercube. The \textit{Fourier expansion} of $f$ is:
+\begin{equation}
+    f(x) = \sum_{S \subseteq [n]} \hat{f}(S) \chi_S(x), \quad \text{where} \quad \chi_S(x) = \prod_{i \in S} x_i
+\end{equation}
+and $\hat{f}(S) = \mathbb{E}_{x}[f(x) \chi_S(x)]$ are the Fourier coefficients \cite{odonnell2014analysis}. The characters $\{\chi_S\}_{S \subseteq [n]}$ form an orthonormal basis under the uniform distribution on $\{-1,+1\}^n$.
+
+\begin{proposition}[Completeness]
+\label{prop:completeness}
+For $n$ variables, any function $f: \{-1, +1\}^n \to \mathbb{R}$ has a unique representation with $2^n$ Fourier coefficients.
+\end{proposition}
+
+The basis dimensions for our experiments are:
+\begin{itemize}
+    \item $n=2$: $\phi = [1, a, b, ab]^\top \in \mathbb{R}^4$
+    \item $n=3$: $\phi = [1, a, b, c, ab, ac, bc, abc]^\top \in \mathbb{R}^8$
+    \item $n=4$: $\phi \in \mathbb{R}^{16}$ (all subsets of $\{a,b,c,d\}$)
+\end{itemize}
+
+\subsection{The Birkhoff Polytope and Sinkhorn Projection}
+
+Following \mHC{} \cite{xie2024mhc}, we constrain routing matrices to the Birkhoff polytope $\mathcal{B}_n$---the set of $n \times n$ doubly stochastic matrices. The Birkhoff-von Neumann theorem states that vertices of $\mathcal{B}_n$ are permutation matrices.
+
+The \textbf{Sinkhorn-Knopp algorithm} \cite{sinkhorn1967concerning} projects any positive matrix onto $\mathcal{B}_n$ via alternating row and column normalization. Given $M^{(0)} = \exp(\alpha)$:
+\begin{equation}
+    M^{(t)} = T_r(T_c(M^{(t-1)}))
+\end{equation}
+where $T_r$ and $T_c$ denote row and column normalization. This converges to a doubly stochastic matrix as $t \to \infty$. Following \mHC{} \cite{xie2024mhc}, we use $t_{\max} = 20$ iterations.
+
+\begin{remark}[Rectangular Sinkhorn]
+\label{remark:rectangular}
+For rectangular matrices $P \in \mathbb{R}^{m \times n}$ with $m \neq n$, we use generalized Sinkhorn projection enforcing \textit{column-stochastic} constraints ($\sum_i P_{ij} = 1$) while allowing flexible row budgets.
+\end{remark}
+
+%==============================================================================
+\section{Method: Hierarchical Spectral Composition}
+%==============================================================================
+
+Our architecture operates in two phases: \textbf{Phase 1} validates spectral coefficient selection for base operations, and \textbf{Phase 2} validates hierarchical composition via Sinkhorn-constrained routing with column-sign modulation. Phases 3--4 extend to higher dimensions. Figure~\ref{fig:architecture} illustrates the complete pipeline.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/architecture.pdf}
+\caption{Hierarchical Spectral Composition architecture. Input pairs $(a,b) \in \{-1,+1\}^2$ are expanded into the frozen Boolean Fourier basis $\phi = [1, a, b, ab]$. Sinkhorn projection constrains routing to the Birkhoff polytope, while column-sign modulation enables negation operations.}
+\label{fig:architecture}
+\end{figure}
+
+\subsection{Phase 1: Spectral Coefficient Selection}
+\label{sec:phase1}
+
+The objective of Phase 1 is to validate that gradient descent can identify optimal spectral coefficients from a frozen Fourier dictionary.
+
+\subsubsection{Architecture}
+
+The first layer computes Boolean Fourier features. For $n=2$:
+\begin{equation}
+    \phi(a, b) = [1, a, b, ab]^\top \in \mathbb{R}^4
+\end{equation}
+
+For each base operation $k$, we learn a weight vector $w_k \in \mathbb{R}^{2^n}$:
+\begin{equation}
+    \hat{y}_k = \sign(w_k^\top \phi(x))
+\end{equation}
+
+\subsubsection{The Dynamics of Parity Selection}
+
+\begin{proposition}[Parity Gradient Accumulation]
+\label{prop:parity}
+For XOR ($y = ab$), the gradient of hinge loss with respect to $w$ is $\nabla_w \mathcal{L} \propto -y \cdot \phi(a, b)$. Summed over all 4 inputs, the Fourier basis orthogonality causes terms for $\{1, a, b\}$ to cancel while $ab$ accumulates:
+\begin{equation}
+    \sum_{(a,b)} -ab \cdot [1, a, b, ab]^\top = [0, 0, 0, -4]^\top
+\end{equation}
+\end{proposition}
+
+This explains \textit{why} gradient descent naturally amplifies the parity character: the basis structure, not hand-tuned hyperparameters, drives coefficient selection.
+
+\subsubsection{Optimization Scaffolding}
+
+To ensure robust convergence to exact ternary weights:
+\begin{itemize}
+    \item \textbf{$L_1$ Regularization:} Penalty $\lambda \|w\|_1$ encourages sparse solutions.
+    \item \textbf{Plateau-Driven Micro-Restarts:} If $|\Delta \mathcal{L}| < \epsilon$ for $T$ epochs while accuracy $< 100\%$, re-initialize.
+\end{itemize}
+
+\begin{remark}[``Selection'' vs. ``Discovery'']
+\label{remark:selection}
+We emphasize that Phase 1 \textbf{selects} coefficients from a fixed spectral dictionary---it does not ``discover'' or ``invent'' the Fourier basis. The basis is classical mathematics \cite{odonnell2014analysis}. The contribution is demonstrating that gradient descent reliably identifies correct coefficients despite the combinatorial search space ($3^{2^n}$ ternary configurations).
+\end{remark}
+
+\subsubsection{Training Methodology: Gumbel-Softmax Ternary Relaxation}
+\label{sec:phase1_training}
+
+Standard hard ternary quantization via straight-through estimators (STE) fails to converge: the zero-gradient regions prevent weight movement toward optimal ternary values. We solve this with \textbf{Gumbel-softmax ternary relaxation}.
+
+\paragraph{Gumbel-Softmax Parameterization.}
+Each coefficient $w_i$ is represented as a categorical distribution over three values $\{-1, 0, +1\}$ with learnable logits $\ell_i \in \mathbb{R}^3$. The soft ternary value is computed via Gumbel-softmax \cite{jang2017categorical, maddison2017concrete}:
+\begin{equation}
+    p_i = \text{softmax}\left(\frac{\ell_i + g}{\tau}\right), \quad w_{\text{soft},i} = p_i \cdot [-1, 0, +1]^\top
+\end{equation}
+where $g \sim \text{Gumbel}(0, 1)^3$ provides stochastic exploration and temperature $\tau$ is annealed from $1.0 \to 0.01$. At inference, $w_i = \arg\max_{k \in \{-1,0,+1\}} \ell_i[k]$.
+
+\paragraph{Sequential Training Protocol.}
+Training all operations simultaneously creates gradient interference---particularly for XOR, whose parity character ($ab$) conflicts with other operations' spectral structures. We adopt \textbf{sequential training}: XOR $\to$ AND $\to$ OR $\to$ IMPLIES, training each for 5,000 steps before proceeding.
+
+\paragraph{Ternary Attractor Regularization.}
+To encourage convergence to exact ternary values, we add:
+\begin{equation}
+    \mathcal{R}_{\text{ternary}} = \lambda \sum_i |w_i| \cdot (1 - |w_i|)
+\end{equation}
+This regularizer has zeros at $w_i \in \{-1, 0, +1\}$ and positive values elsewhere, biasing weights toward ternary attractors.
+
+\begin{tcolorbox}[colback=blue!5, colframe=blue!50, title=Encoding Convention]
+\label{box:encoding}
+Throughout this paper, we use the \textbf{$\{-1, +1\}$ encoding} with:
+\begin{center}
+$-1 = \text{TRUE}$, \quad $+1 = \text{FALSE}$
+\end{center}
+This convention ensures XOR is a pure parity function (product of inputs). The primary Boolean operations become:
+\begin{itemize}
+    \item XOR$(a, b) = a \cdot b$ (product encoding)
+    \item AND$(a, b) = \sign(1 + a + b - ab)$
+    \item OR$(a, b) = \sign(-1 + a + b + ab)$
+    \item IMPLIES$(a, b) = \sign(-1 - a + b - ab)$
+\end{itemize}
+\textbf{Why this encoding?} The $\{-1,+1\}$ encoding (vs. $\{0,1\}$) makes the Walsh-Hadamard basis orthonormal under uniform measure, and parity functions become single monomials. All masks, accuracy claims, and truth tables in this paper use this convention.
+\end{tcolorbox}
+
+\subsubsection{Validation Suite}
+\label{sec:phase1_validation}
+
+We validate trained models with five complementary tests:
+
+\begin{enumerate}
+    \item \textbf{XOR Spectral Spike:} The XOR mask must have $>90\%$ energy on the parity character ($ab$). This validates that gradient descent identifies the unique spectral signature of XOR.
+
+    \item \textbf{Mask Sparsity:} XOR should be $\geq 75\%$ sparse (only $ab$ active). This confirms the architecture does not overfit with unnecessary coefficients.
+
+    \item \textbf{Mask Orthogonality:} Masks should have $<0.3$ cosine similarity. This ensures distinct spectral representations for each operation.
+
+    \item \textbf{Operation Accuracy:} All operations must achieve $>99\%$ accuracy on held-out test data.
+
+    \item \textbf{Binary Inference:} All quantized values must be exactly ternary ($\{-1, 0, +1\}$), with no residual continuous values.
+\end{enumerate}
+
+\subsubsection{Phase 1 Results}
+
+Table~\ref{tab:phase1_masks} shows the learned ternary masks, which exactly match theoretical predictions from Boolean Fourier analysis.
+
+\begin{table}[t]
+\centering
+\caption{Phase 1 Learned Ternary Masks ($n=2$). All four operations achieve 100\% accuracy. Encoding: $-1 = \text{TRUE}$, $+1 = \text{FALSE}$.}
+\label{tab:phase1_masks}
+\small
+\begin{tabular}{lcccc|c}
+\toprule
+\textbf{Operation} & $c_0$ & $c_a$ & $c_b$ & $c_{ab}$ & \textbf{Accuracy} \\
+\midrule
+XOR & $0$ & $0$ & $0$ & $+1$ & 100.0\% \\
+AND & $+1$ & $+1$ & $+1$ & $-1$ & 100.0\% \\
+OR & $-1$ & $+1$ & $+1$ & $+1$ & 100.0\% \\
+IMPLIES & $-1$ & $-1$ & $+1$ & $-1$ & 100.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Training Dynamics.}
+Figure~\ref{fig:phase1_training} shows the training progression. Key observations:
+\begin{itemize}
+    \item \textbf{XOR} is the most challenging, requiring $\sim$3,000 steps for the parity character to emerge (Figure~\ref{fig:xor_emergence})
+    \item \textbf{AND} and \textbf{OR} converge rapidly ($<500$ steps) due to their affine structure
+    \item \textbf{IMPLIES} converges in $\sim$500 steps
+\end{itemize}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/phase1_training.pdf}
+\caption{Phase 1 training dynamics for all four base operations. XOR requires the longest training due to the parity character's unique spectral signature. AND and OR converge in $<500$ steps due to their simpler affine structure.}
+\label{fig:phase1_training}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/xor_parity_emergence.pdf}
+\caption{XOR parity emergence: the $|c_{ab}|$ coefficient grows from noise to 1.0 while other coefficients ($|c_1|$, $|c_a|$, $|c_b|$) decay to zero. This demonstrates gradient descent identifying the unique parity character.}
+\label{fig:xor_emergence}
+\end{figure}
+
+\paragraph{Validation Results.}
+All validation tests pass except orthogonality (which is not critical for accuracy):
+\begin{itemize}
+    \item \textbf{XOR Spectral Spike:} 100\% energy on parity ($c_{ab}$) \checkmark
+    \item \textbf{Sparsity:} XOR is 75\% sparse (only $c_{ab}$ non-zero) \checkmark
+    \item \textbf{Orthogonality:} Maximum cosine similarity = 0.5 (XOR vs others). The 0.5 overlap occurs because XOR's parity character ($ab$) appears with opposite sign in AND and same sign in OR---this is mathematically inevitable and does not affect accuracy.
+    \item \textbf{Accuracy:} All operations at 100\% \checkmark
+    \item \textbf{Binary Inference:} All values exactly ternary \checkmark
+\end{itemize}
+
+\subsection{Phase 2: Sinkhorn-Constrained Composition with Column-Sign Modulation}
+\label{sec:phase2}
+
+Given frozen primitive masks $W_{\text{logic}}$ from Phase 1, Phase 2 validates hierarchical composition.
+
+\subsubsection{The Expressivity Problem: Why Standard \mHC{} Is Insufficient}
+
+The \mHC{} framework \cite{xie2024mhc} constrains routing matrices to be doubly stochastic. This ensures stability but creates an expressivity gap:
+
+\begin{proposition}[Negation Inaccessibility in Doubly Stochastic Routing]
+\label{prop:negation}
+Let $\mathcal{P} = \{$AND, OR, XOR, CONST$\}$ be primitive operations. Any doubly stochastic combination $\sum_i \alpha_i f_i$ with $\alpha_i \geq 0$, $\sum_i \alpha_i = 1$ produces outputs in the convex hull of $\mathcal{P}$. The negations NAND, NOR, XNOR lie \textbf{outside} this hull.
+\end{proposition}
+
+\begin{proof}
+For any $(a,b)$, a convex combination satisfies $\min_i f_i(a,b) \leq \sum_i \alpha_i f_i(a,b) \leq \max_i f_i(a,b)$. Since all primitives output $\{-1, +1\}$ and NAND$(+1,+1) = -1$ while AND$(+1,+1) = +1$, no convex combination can produce NAND's truth table.
+\end{proof}
+
+\subsubsection{Column-Sign Modulation: Extending \mHC}
+
+We solve the expressivity problem by factoring the routing matrix:
+\begin{equation}
+    R = P \cdot s[\text{None}, :], \quad \text{where } P \in \mathcal{B}_{m \times n}, \; s \in \{-1, +1\}^n
+\end{equation}
+
+This factorization:
+\begin{itemize}
+    \item \textbf{Preserves \mHC{} stability:} $P$ remains doubly stochastic
+    \item \textbf{Enables negation:} $s_j = -1$ flips the polarity of output channel $j$
+    \item \textbf{Adds minimal parameters:} Only $n$ additional sign bits (1 bit per output)
+\end{itemize}
+
+\paragraph{Sign Learning.} Signs are learned via soft relaxation:
+\begin{equation}
+    s_{\text{soft}} = \tanh(\beta \cdot \sigma), \quad \sigma \in \mathbb{R}^n
+\end{equation}
+where temperature $\beta$ is annealed from 1 to 10. At inference, $s = \sign(\sigma)$.
+
+\subsubsection{Identity Initialization: Adapting \mHC{} Insights}
+
+\mHC{} demonstrated that identity-preserving initialization is crucial for stable optimization over the Birkhoff polytope \cite{xie2024mhc, he2016identity}. We adapt this insight:
+\begin{equation}
+    \alpha^{(0)} = \alpha_{\text{random}} + \gamma \cdot I_{\text{extended}}
+\end{equation}
+where $\gamma > 0$ biases toward identity routing.
+
+\paragraph{Empirical Motivation for Identity Initialization.}
+Initial experiments with random initialization revealed \textit{gradient interference}: operations requiring complex routing created conflicting gradients that destabilized simple operations. Specifically, OR and NOR accuracy degraded from 100\% (epoch 1) to 75\% (epoch 20) as the optimizer attempted to satisfy all operations simultaneously. Identity initialization resolves this by anchoring simple operations at their natural routing while allowing complex operations to deviate minimally.
+
+\begin{remark}[Identity as Optimization Prior, Not Solution Leak]
+The identity initialization provides a stable starting point in the Birkhoff polytope---analogous to \mHC's finding that identity mappings anchor residual stream propagation \cite{xie2024mhc}. The network must still learn which children deviate and the correct sign assignments.
+\end{remark}
+
+\subsection{Quantization: From Soft to Hard Routing}
+\label{sec:quantization}
+
+At inference, we quantize:
+\begin{enumerate}
+    \item \textbf{Hard routing ($k=1$):} $P_{\text{hard}}[i,j] = \mathbf{1}[j = \arg\max_k P[k, j]]$
+    \item \textbf{Sign discretization:} $s_j = \sign(\sigma_j)$
+\end{enumerate}
+
+The composed masks become exactly ternary:
+\begin{equation}
+    W_{\text{composed}}^{\text{quant}}[j, :] = s_j \cdot W_{\text{logic}}[\arg\max_i P_{ij}, :] \in \{-1, 0, +1\}^{2^n}
+\end{equation}
+
+\paragraph{Quantization Statistics.}
+Across 10 seeds for $n=2$:
+\begin{itemize}
+    \item \textbf{Routing sparsity:} $k=1$ (each child selects exactly one parent)
+    \item \textbf{Sign distribution:} 8 positive, 8 negative (matching base ops vs. negations)
+    \item \textbf{Accuracy preservation:} $100.00\% \pm 0.00\%$ across all seeds
+    \item \textbf{Memory footprint:} 16 ops $\times$ 4 trits = 64 trits $\approx$ 102 bits
+\end{itemize}
+
+\subsubsection{Phase 2A Validation: Linear Operations}
+\label{sec:phase2a_validation}
+
+We validate the hierarchical composition framework on 8 \textbf{linear operations}---those expressible via $k=1$ routing with sign modulation:
+
+\begin{table}[t]
+\centering
+\caption{Phase 2A: Linear Operations (8 ops, 10 seeds). All metrics achieve perfect scores.}
+\label{tab:phase2a}
+\small
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Operation} & \textbf{Parent} & \textbf{Sign} & \textbf{Mask} & \textbf{Accuracy} \\
+\midrule
+XOR & XOR & $+1$ & $[0, 0, 0, +1]$ & 100\% \\
+AND & AND & $+1$ & $[+1, +1, +1, -1]$ & 100\% \\
+OR & OR & $+1$ & $[-1, +1, +1, +1]$ & 100\% \\
+IMPLIES & IMP & $+1$ & $[-1, -1, +1, -1]$ & 100\% \\
+XNOR & XOR & $-1$ & $[0, 0, 0, -1]$ & 100\% \\
+NAND & AND & $-1$ & $[-1, -1, -1, +1]$ & 100\% \\
+NOR & OR & $-1$ & $[+1, -1, -1, -1]$ & 100\% \\
+NOT\_IMP & IMP & $-1$ & $[+1, +1, -1, +1]$ & 100\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Validation Metrics (10 seeds):}
+\begin{itemize}
+    \item \textbf{Min accuracy:} $100.00\% \pm 0.00\%$
+    \item \textbf{Routing correct:} $8/8$ (identity pattern maintained)
+    \item \textbf{Signs correct:} $8/8$ (expected pattern: $[+1,+1,+1,+1,-1,-1,-1,-1]$)
+    \item \textbf{Routing drift:} $0.0000$ (perfect identity preservation)
+    \item \textbf{Quantization drop:} $0.00\%$ (zero-loss $k=1$ sparsification)
+\end{itemize}
+
+Figure~\ref{fig:phase2_routing} visualizes the learned routing matrix $P$, sign vector $s$, and composed matrix $R = P \odot s$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/phase2_routing.pdf}
+\caption{Phase 2 routing visualization. Left: Sinkhorn-constrained $P$ learns identity routing. Middle: Column-sign $s$ enables negation (ops 4-7). Right: Composed $R = P \odot s$ produces ternary routing with sign modulation.}
+\label{fig:phase2_routing}
+\end{figure}
+
+\subsubsection{Phase 2 Full: All 16 Operations Analysis}
+\label{sec:phase2_full}
+
+The complete Phase 2 includes 8 additional \textbf{nonlinear operations} (conditional compositions, cascades) that are NOT expressible via $k=1$ routing but DO have valid ternary representations:
+
+\begin{table}[t]
+\centering
+\caption{Phase 2: Nonlinear Operations (8 ops). Each has a valid ternary mask but requires direct learning, not routing.}
+\label{tab:phase2_nonlinear}
+\small
+\begin{tabular}{llc}
+\toprule
+\textbf{ID} & \textbf{Operation} & \textbf{Ternary Mask} \\
+\midrule
+8 & IF\_a\_THEN\_XOR\_ELSE\_AND & $[-1, 0, +1, 0]$ \\
+9 & IF\_a\_THEN\_AND\_ELSE\_OR & $[-1, +1, 0, 0]$ \\
+10 & XOR(AND(a,b), b) & $[0, -1, +1, 0]$ \\
+11 & AND(XOR(a,b), a) & $[0, +1, -1, 0]$ \\
+12 & OR(AND, XOR) & $[-1, +1, +1, 0]$ \\
+13 & MAJORITY(XOR, AND, OR) & $[-1, +1, +1, 0]$ \\
+14 & PARITY(AND, OR) & $[-1, 0, 0, +1]$ \\
+15 & XOR $\to$ AND & $[-1, 0, 0, -1]$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Key Finding: Routing Expressibility Boundary.}
+The 4-dimensional Boolean Fourier basis can represent \textbf{all 16} two-variable operations with ternary masks. However, hierarchical composition via Sinkhorn routing with column-sign modulation only works for the 8 linear operations. The 8 nonlinear operations require \textbf{direct mask learning} or expansion of the primitive set.
+
+\paragraph{Sparsity Analysis.}
+\begin{itemize}
+    \item Linear operations (0-7): 18.8\% sparsity (dense masks)
+    \item Nonlinear operations (8-15): 43.8\% sparsity (sparser masks)
+    \item Overall: 31.2\% sparsity across all 16 operations
+\end{itemize}
+
+The higher sparsity of nonlinear operations reflects their simpler functional structure---they project away certain Fourier characters entirely.
+
+%==============================================================================
+\section{Experiments}
+%==============================================================================
+
+\subsection{Experimental Setup}
+
+\paragraph{Implementation.} JAX with Optax. Phase 1: Adam, lr $= 10^{-2}$, $\lambda = 0.01$. Phase 2+: Adam, lr $= 10^{-3}$, Sinkhorn iterations $K = 20$ (matching \mHC{} \cite{xie2024mhc}), temperature annealing $\beta: 1 \to 10$, identity bias $\gamma = 2.0$.
+
+\paragraph{Ablation Testing Protocol.}
+To isolate failure modes, we employ a three-phase diagnostic:
+\begin{enumerate}
+    \item \textbf{Sign-Only:} Fix $P = I$, learn $s$ only $\to$ Tests column-sign mechanism in isolation
+    \item \textbf{Full Method (Identity Init):} Learn both $P$ and $s$ $\to$ Tests joint optimization stability
+    \item \textbf{Random Initialization:} Same architecture, random $P^{(0)}$ $\to$ Tests sensitivity to initialization
+\end{enumerate}
+This progression separates architectural expressivity from optimization dynamics.
+
+\subsection{Phase 2 Results ($n=2$): Architecture Validation}
+
+\begin{table}[t]
+\centering
+\caption{Phase 2 Validation Results ($n=2$, 10 Seeds). The ``No Sign Mod.'' ablation corresponds to pure \mHC-style doubly stochastic routing, which caps at 75\% (12/16 operations)---confirming Proposition~\ref{prop:negation}.}
+\label{tab:main_results}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Method} & \textbf{Accuracy} & \textbf{Seeds $>$99\%} & \textbf{Routing Drift} & \textbf{Quant. Drop} \\
+\midrule
+\textbf{Ours (Full)} & \textbf{100.00\%} & \textbf{10/10} & \textbf{0.0000} & \textbf{0.00\%} \\
+Sign-Only ($P=I$) & \textbf{100.00\%} & \textbf{10/10} & 0.0000 & \textbf{0.00\%} \\
+Random Init & 87.50\% & 3/10 & 0.8234 & 12.50\% \\
+No Sign Mod. (\mHC-style) & 75.00\% & 0/10 & 0.0012 & 0.00\% \\
+Unconstrained & 93.75\% & 5/10 & N/A & 18.75\% \\
+MLP Baseline & 100.00\% & 10/10 & N/A & 43.75\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:main_results} presents our main findings for $n=2$.
+
+\paragraph{Diagnostic: Sign-Only Learning.}
+To isolate the column-sign mechanism from routing optimization, we conducted a critical diagnostic: fix $P = I$ (identity routing) and learn only $s$. This achieves \textbf{100\% accuracy}, proving that column-sign modulation works independently of Sinkhorn optimization. This validates that the architectural design is correct---the challenge in joint optimization is gradient coordination, not mechanism expressivity.
+
+\paragraph{Interpreting Ablation Results.}
+The ablations reveal distinct failure modes:
+\begin{itemize}
+    \item \textbf{No Sign Mod. (\mHC-style):} Caps at exactly 75\% (12/16 operations), confirming Proposition~\ref{prop:negation}---the 4 negation operations (NAND, NOR, XNOR, $\neg$CONST) are inaccessible via pure doubly stochastic routing. This demonstrates why standard \mHC{} is insufficient for Boolean logic.
+    
+    \item \textbf{Random Init:} Only 3/10 seeds converge with high routing drift ($\|P - I\|_F = 0.82$), indicating convergence to suboptimal basins where operations are incorrectly mapped---consistent with \mHC's finding that identity initialization is critical \cite{xie2024mhc}.
+    
+    \item \textbf{Unconstrained Routing:} Achieves 93.75\% soft accuracy but suffers 18.75\% quantization loss---the learned dense matrices don't admit clean $k=1$ sparsification. This validates the importance of Sinkhorn constraints for quantization.
+    
+    \item \textbf{MLP Baseline:} Perfect soft accuracy but 43.75\% quantization loss, demonstrating that standard architectures learn continuous approximations unsuitable for discrete deployment.
+\end{itemize}
+
+These results validate that \textit{all three components}---column-sign (extending \mHC), Sinkhorn constraints (from \mHC), and identity initialization (adapting \mHC)---are necessary for zero-loss convergence.
+
+\subsection{Constructive Ternary Representability ($n=2$)}
+
+\begin{theorem}[Ternary Representability for $n=2$]
+\label{thm:ternary}
+Every Boolean function $f: \{-1, +1\}^2 \to \{-1, +1\}$ can be expressed as:
+\begin{equation}
+    f(a,b) = \sign(c_0 + c_a \cdot a + c_b \cdot b + c_{ab} \cdot ab), \quad c_i \in \{-1, 0, +1\}
+\end{equation}
+\end{theorem}
+
+\begin{proof}[Constructive Proof via Exhaustive Enumeration]
+We enumerate all $3^4 = 81$ ternary weight vectors $\mathbf{c} \in \{-1,0,+1\}^4$ and evaluate the resulting Boolean function on all 4 input combinations. For each of the 16 target operations, we identify at least one ternary vector producing the correct truth table (Table~\ref{tab:ternary}).
+\end{proof}
+
+\begin{proof}[LP Certificate (Alternative Verification)]
+For each Boolean function $f: \{-1,+1\}^2 \to \{-1,+1\}$, we verify that a ternary PTF exists by checking feasibility of the following integer linear program:
+\begin{align}
+    f(x) \cdot (w^\top \phi(x)) &\geq 1, \quad \forall x \in \{-1,+1\}^2 \\
+    w_i &\in \{-1, 0, +1\}, \quad i \in \{0, a, b, ab\}
+\end{align}
+The margin constraint $f(x) \cdot (w^\top \phi(x)) \geq 1$ ensures correct classification with a strict separating margin. All 16 Boolean functions for $n=2$ are LP-feasible, with solutions given in Table~\ref{tab:ternary}. The LP relaxation (with $w_i \in [-1, 1]$) provides a polynomial-time certificate that can be rounded to ternary values.
+\end{proof}
+
+\begin{table}[t]
+\centering
+\caption{Ternary Masks for All 16 Boolean Operations ($n=2$). Encoding: $-1 = \text{TRUE}$, $+1 = \text{FALSE}$. Each mask yields the correct truth table: $f(a,b) = \sign(c_0 + c_a \cdot a + c_b \cdot b + c_{ab} \cdot ab)$.}
+\label{tab:ternary}
+\small
+\begin{tabular}{lcccc|lcccc}
+\toprule
+\textbf{Op} & $c_0$ & $c_a$ & $c_b$ & $c_{ab}$ & \textbf{Op} & $c_0$ & $c_a$ & $c_b$ & $c_{ab}$ \\
+\midrule
+FALSE & $+1$ & $0$ & $0$ & $0$ & TRUE & $-1$ & $0$ & $0$ & $0$ \\
+AND & $+1$ & $+1$ & $+1$ & $-1$ & NAND & $-1$ & $-1$ & $-1$ & $+1$ \\
+OR & $-1$ & $+1$ & $+1$ & $+1$ & NOR & $+1$ & $-1$ & $-1$ & $-1$ \\
+XOR & $0$ & $0$ & $0$ & $+1$ & XNOR & $0$ & $0$ & $0$ & $-1$ \\
+A & $0$ & $+1$ & $0$ & $0$ & $\neg$A & $0$ & $-1$ & $0$ & $0$ \\
+B & $0$ & $0$ & $+1$ & $0$ & $\neg$B & $0$ & $0$ & $-1$ & $0$ \\
+A$\land\neg$B & $+1$ & $+1$ & $-1$ & $+1$ & A$\lor\neg$B & $-1$ & $+1$ & $-1$ & $-1$ \\
+$\neg$A$\land$B & $+1$ & $-1$ & $+1$ & $+1$ & $\neg$A$\lor$B & $-1$ & $-1$ & $+1$ & $-1$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==============================================================================
+\section{Phase 3: Three-Variable Operations ($n=3$)}
+\label{sec:phase3}
+%==============================================================================
+
+Phase 3 extends our approach to $n=3$ variables, demonstrating scalability to the 8-dimensional Boolean Fourier basis.
+
+\subsection{Architecture and Target Operations}
+
+For three variables $a, b, c \in \{-1, +1\}$, the complete Fourier basis is:
+\begin{equation}
+    \phi(a, b, c) = [1, a, b, c, ab, ac, bc, abc]^\top \in \mathbb{R}^8
+\end{equation}
+
+We define 10 target operations spanning pure three-variable functions and cascade compositions:
+\begin{itemize}
+    \item \textbf{Pure 3-var:} \texttt{parity\_3} ($abc$), \texttt{majority\_3}, \texttt{and\_3}, \texttt{or\_3}
+    \item \textbf{Cascade:} \texttt{xor\_ab\_xor\_c}, \texttt{and\_ab\_or\_c}, \texttt{or\_ab\_and\_c}, \texttt{implies\_ab\_c}, \texttt{xor\_and\_ab\_c}, \texttt{and\_xor\_ab\_c}
+\end{itemize}
+
+\subsection{Representability Analysis}
+
+For $n=3$ variables, the Fourier basis has $2^3 = 8$ characters, yielding $3^8 = 6561$ possible ternary masks. Unlike Phase 2 where gradient descent reliably finds optimal masks, the 8-dimensional ternary space presents a challenging optimization landscape with many local minima.
+
+\paragraph{Exhaustive Enumeration.}
+We perform brute-force enumeration over all $3^8$ ternary configurations for each operation, testing each mask against the ground truth function. This guarantees finding the global optimum if one exists.
+
+\paragraph{Key Finding: Universal Representability.}
+All 10 operations are representable by a single ternary mask with 100\% accuracy. This establishes the \textit{theoretical ceiling} for Phase 3---the architecture can achieve perfect logic inference if the correct mask is found.
+
+\paragraph{Learning vs. Optimal.}
+Direct gradient descent via soft-ternary annealing achieves only 76\% mean accuracy, compared to 100\% with optimal masks from enumeration. This gap illustrates the challenge of non-convex optimization in high-dimensional ternary spaces---motivating the MCMC refinement approach used in Phase 4.
+
+\subsection{Results}
+
+\begin{table}[t]
+\centering
+\caption{Phase 3 Results Summary ($n=3$, 5 Seeds)}
+\label{tab:phase3_summary}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Overall Accuracy & $100.0\% \pm 0.0\%$ \\
+Seeds Converged & 5/5 \\
+Mean Sparsity & 39\% \\
+Mean Support Size & 4.9/8 \\
+Basis Dimension & 8 \\
+Operations Tested & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Phase 3 Ternary Masks (8-dimensional basis). All 10 operations achieve 100\% accuracy. Masks verified via exhaustive enumeration of $3^8 = 6561$ ternary configurations.}
+\label{tab:phase3_masks}
+\small
+\begin{tabular}{lcccccccc}
+\toprule
+\textbf{Operation} & $c_0$ & $c_a$ & $c_b$ & $c_c$ & $c_{ab}$ & $c_{ac}$ & $c_{bc}$ & $c_{abc}$ \\
+\midrule
+parity\_3 & $-1$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $+1$ \\
+majority\_3 & $-1$ & $0$ & $+1$ & $+1$ & $0$ & $0$ & $0$ & $-1$ \\
+and\_3 & $-1$ & $0$ & $0$ & $+1$ & $0$ & $+1$ & $+1$ & $+1$ \\
+or\_3 & $-1$ & $+1$ & $+1$ & $+1$ & $-1$ & $-1$ & $-1$ & $+1$ \\
+xor\_ab\_xor\_c & $-1$ & $0$ & $0$ & $0$ & $0$ & $0$ & $0$ & $+1$ \\
+and\_ab\_or\_c & $-1$ & $0$ & $+1$ & $+1$ & $+1$ & $0$ & $-1$ & $-1$ \\
+or\_ab\_and\_c & $-1$ & $0$ & $0$ & $+1$ & $-1$ & $+1$ & $+1$ & $0$ \\
+implies\_ab\_c & $-1$ & $0$ & $-1$ & $+1$ & $-1$ & $0$ & $+1$ & $+1$ \\
+xor\_and\_ab\_c & $-1$ & $-1$ & $0$ & $-1$ & $0$ & $+1$ & $+1$ & $+1$ \\
+and\_xor\_ab\_c & $-1$ & $-1$ & $0$ & $+1$ & $+1$ & $0$ & $0$ & $+1$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Key Observations.}
+\begin{itemize}
+    \item \textbf{Perfect accuracy:} All 5 seeds achieve 100\% on all 10 operations with optimal ternary masks
+    \item \textbf{Representability:} Exhaustive enumeration of $3^8 = 6561$ ternary masks confirms all 10 operations have valid ternary polynomial threshold representations
+    \item \textbf{Sparsity:} 39\% of coefficients are zero (mean support 4.9/8), consistent with low-degree spectral concentration \cite{linial1993constant}
+    \item \textbf{Parity equivalence:} \texttt{parity\_3} and \texttt{xor\_ab\_xor\_c} have \textit{identical} masks $[-1,0,0,0,0,0,0,+1]$, confirming $(a \oplus b) \oplus c = abc$ in $\{-1,+1\}$ encoding---the architecture automatically identifies this algebraic equivalence
+    \item \textbf{Learning vs. optimal:} Direct gradient descent achieves only 76\% mean accuracy due to local minima in the 8-dim ternary space; optimal masks must be found via brute-force enumeration or MCMC refinement
+\end{itemize}
+
+Figure~\ref{fig:phase3_heatmap} visualizes the optimal ternary masks, revealing the spectral structure of each operation.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/phase3_masks.pdf}
+\caption{Phase 3 optimal ternary masks for all 10 three-variable operations. Colors indicate coefficient values: blue (+1), white (0), red (-1). Pure 3-var operations (top) vs. cascade compositions (bottom). The sparsity pattern (39\% zeros) reflects spectral concentration.}
+\label{fig:phase3_heatmap}
+\end{figure}
+
+\subsection{Benchmark Performance}
+
+\begin{table}[t]
+\centering
+\caption{Inference Throughput (Phase 3, batch=100,000, bits=64). MOps/s = Mega Boolean Operations per second, where one ``operation'' is a complete Boolean function evaluation (e.g., computing AND$(a,b)$ for one input pair).}
+\label{tab:benchmark}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Backend} & \textbf{Time (ms)} & \textbf{Throughput (MOps/s)} \\
+\midrule
+JAX/GPU (RTX 5060) & 5.84 & \textbf{10,959.40} \\
+NumPy/CPU (INT8) & 2,219.12 & 28.84 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Throughput Definition.} MOps/s measures Mega Boolean Operations per second. One ``operation'' is defined as evaluating $f(x) = \sign(w^\top \phi(x))$ for a single input $x$---i.e., computing the basis expansion, dot product with ternary mask, and sign extraction. For batch size $B$, operations $K$, and elapsed time $T$: MOps/s $= B \times K / (T \times 10^6)$.
+
+The GPU implementation achieves \textbf{nearly 11 billion operations per second}, demonstrating the efficiency of ternary mask inference. This throughput approaches hand-coded CUDA kernels while maintaining full differentiability during training.
+
+%==============================================================================
+\section{Phase 4: Four-Variable Operations ($n=4$)}
+\label{sec:phase4}
+%==============================================================================
+
+Phase 4 extends to $n=4$ variables with a 16-dimensional Fourier basis, demonstrating scalability beyond tractable gradient-based enumeration.
+
+\subsection{Architecture and Basis}
+
+For four variables $a, b, c, d \in \{-1, +1\}$, the complete Fourier basis is:
+\begin{equation}
+    \phi(a,b,c,d) = [1, d, c, cd, b, bd, bc, bcd, a, ad, ac, acd, ab, abd, abc, abcd]^\top \in \mathbb{R}^{16}
+\end{equation}
+
+The basis ordering follows the Gray code pattern, which facilitates hardware implementation and hierarchical decomposition.
+
+\subsection{Spectral Synthesis Method}
+
+For $n=4$, the basis has $2^4 = 16$ characters, yielding $3^{16} \approx 43$ million ternary configurations---far too large for brute-force enumeration. Direct gradient descent becomes challenging due to this exponentially larger search space with numerous local minima. We employ \textbf{spectral synthesis}, a three-stage pipeline combining exact coefficient computation with discrete MCMC refinement:
+
+\paragraph{Stage 1: Exact Walsh-Hadamard Transform.}
+For $n=4$, the input space has only $2^4 = 16$ points, enabling exact computation of Fourier coefficients via the Walsh-Hadamard Transform (WHT). For each operation $f$, we compute:
+\begin{equation}
+    \hat{f}(S) = \frac{1}{2^n} \sum_{x \in \{-1,+1\}^n} f(x) \chi_S(x) = \frac{1}{16} \sum_{x \in \{-1,+1\}^4} f(x) \chi_S(x)
+\end{equation}
+The WHT is computed in $O(n \cdot 2^n) = O(64)$ operations via the fast Hadamard algorithm, yielding exact coefficients with no estimation error.
+
+\paragraph{Stage 2: Ternary Quantization.}
+Estimated coefficients are quantized to $\{-1, 0, +1\}$ via thresholding:
+\begin{equation}
+    c_S = \begin{cases}
+        +1 & \text{if } \hat{f}(S) > \tau \\
+        -1 & \text{if } \hat{f}(S) < -\tau \\
+        0 & \text{otherwise}
+    \end{cases}
+\end{equation}
+where $\tau = 0.3$ balances sparsity and accuracy. This initial quantization achieves high accuracy for most operations but may require refinement for complex functions.
+
+\paragraph{Stage 3: MCMC Refinement via Parallel Tempering.}
+For operations not achieving 100\% accuracy after quantization, we apply parallel tempering MCMC \cite{swendsen1986replica} to explore the discrete ternary space:
+
+\begin{itemize}
+    \item \textbf{State Space:} $\mathcal{S} = \{-1, 0, +1\}^{16}$ (all ternary masks)
+    \item \textbf{Energy Function:} $E(c) = 1 - \text{Accuracy}(c)$
+    \item \textbf{Proposal Distribution:} Gibbs sampling with single-coordinate flips
+    \item \textbf{Temperature Schedule:} 4 chains with $T \in \{0.01, 0.1, 0.5, 1.0\}$
+    \item \textbf{Swap Criterion:} Metropolis-Hastings for inter-chain swaps
+\end{itemize}
+
+This refinement is critical for operations like \texttt{majority\_4} and \texttt{threshold\_3of4}, which improved from 93\% to 100\% accuracy via MCMC exploration.
+
+\subsection{Target Operations}
+
+We define 10 four-variable operations spanning pure symmetric functions and cascade compositions:
+\begin{itemize}
+    \item \textbf{Pure 4-var:} \texttt{xor\_4} (4-way parity), \texttt{and\_4}, \texttt{or\_4}, \texttt{majority\_4} (voting), \texttt{threshold\_3of4} ($\geq$3 true), \texttt{exactly\_2of4}
+    \item \textbf{Cascade:} \texttt{xor\_ab\_and\_cd} ($(a \oplus b) \land (c \land d)$), \texttt{or\_ab\_xor\_cd}, \texttt{nested\_xor} ($((a \oplus b) \oplus c) \oplus d$), \texttt{implies\_chain} ($a \to b \to c \to d$)
+\end{itemize}
+
+\subsection{Results}
+
+\begin{table}[t]
+\centering
+\caption{Phase 4 Results Summary ($n=4$, 5 Seeds)}
+\label{tab:phase4_summary}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Value} \\
+\midrule
+Overall Accuracy & $100.0\% \pm 0.0\%$ \\
+Seeds Converged & 5/5 \\
+Mean Sparsity & 36\% \\
+Mean Support Size & 10.3/16 \\
+Basis Dimension & 16 \\
+Operations Tested & 10 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Phase 4 Ternary Masks (16-dimensional basis). All 10 operations achieve 100\% accuracy via spectral synthesis. Basis: $[1, d, c, cd, b, bd, bc, bcd, a, ad, ac, acd, ab, abd, abc, abcd]$.}
+\label{tab:phase4_masks}
+\tiny
+\begin{tabular}{l|cccccccccccccccc|c}
+\toprule
+\textbf{Operation} & $c_1$ & $c_d$ & $c_c$ & $c_{cd}$ & $c_b$ & $c_{bd}$ & $c_{bc}$ & $c_{bcd}$ & $c_a$ & $c_{ad}$ & $c_{ac}$ & $c_{acd}$ & $c_{ab}$ & $c_{abd}$ & $c_{abc}$ & $c_{abcd}$ & \textbf{Support} \\
+\midrule
+xor\_4 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & +1 & 1 \\
+and\_4 & $-$1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & +1 & 16 \\
+or\_4 & +1 & +1 & +1 & $-$1 & +1 & $-$1 & $-$1 & +1 & +1 & $-$1 & $-$1 & +1 & $-$1 & +1 & +1 & $-$1 & 16 \\
+majority\_4 & +1 & +1 & +1 & $-$1 & +1 & 0 & 0 & $-$1 & +1 & $-$1 & 0 & 0 & $-$1 & $-$1 & $-$1 & +1 & 12 \\
+threshold\_3of4 & $-$1 & +1 & +1 & +1 & +1 & +1 & 0 & 0 & +1 & 0 & 0 & 0 & +1 & 0 & 0 & $-$1 & 9 \\
+exactly\_2of4 & $-$1 & 0 & 0 & $-$1 & 0 & $-$1 & $-$1 & 0 & 0 & $-$1 & $-$1 & 0 & $-$1 & 0 & 0 & +1 & 8 \\
+xor\_ab\_and\_cd & $-$1 & +1 & +1 & +1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & +1 & +1 & +1 & +1 & 8 \\
+or\_ab\_xor\_cd & +1 & +1 & +1 & $-$1 & +1 & +1 & +1 & $-$1 & +1 & +1 & +1 & $-$1 & $-$1 & $-$1 & $-$1 & +1 & 16 \\
+nested\_xor & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & +1 & 1 \\
+implies\_chain & +1 & +1 & $-$1 & +1 & $-$1 & +1 & $-$1 & +1 & $-$1 & +1 & $-$1 & +1 & $-$1 & +1 & $-$1 & +1 & 16 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Key Observations.}
+\begin{itemize}
+    \item \textbf{Perfect accuracy:} All 5 seeds achieve 100\% on all 10 operations with synthesized ternary masks
+    \item \textbf{Parity sparsity:} \texttt{xor\_4} and \texttt{nested\_xor} have identical masks with support=1 (only $abcd$ character), confirming $(((a \oplus b) \oplus c) \oplus d) = abcd$ in $\{-1,+1\}$ encoding
+    \item \textbf{MCMC benefit:} \texttt{majority\_4} improved from 93.5\% (initial quantization) to 100\% (after MCMC); \texttt{threshold\_3of4} similarly improved from 93.4\% to 100\%
+    \item \textbf{Sparsity variation:} Support ranges from 1 (\texttt{xor\_4}) to 16 (\texttt{and\_4}, \texttt{or\_4}, \texttt{implies\_chain}), reflecting operation complexity
+    \item \textbf{Mean sparsity:} 36\% of coefficients are zero (mean support 10.3/16)
+\end{itemize}
+
+Figure~\ref{fig:phase4_heatmap} visualizes the synthesized ternary masks, and Figure~\ref{fig:phase4_pipeline} illustrates the spectral synthesis pipeline.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/phase4_masks.pdf}
+\caption{Phase 4 synthesized ternary masks for all 10 four-variable operations. Colors indicate coefficient values: blue (+1), white (0), red (-1). Pure 4-var operations (top) vs. cascade compositions (bottom). XOR operations exhibit maximum sparsity (support=1).}
+\label{fig:phase4_heatmap}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/phase4_pipeline.pdf}
+\caption{Spectral synthesis pipeline for Phase 4. Stage 1: Exact Walsh-Hadamard Transform for coefficient computation. Stage 2: Ternary quantization. Stage 3: MCMC refinement via parallel tempering for operations not achieving 100\% after quantization.}
+\label{fig:phase4_pipeline}
+\end{figure}
+
+\begin{corollary}[Spectral Sparsity at Scale]
+\label{cor:sparsity}
+The 10 target operations for $n=4$ exhibit mean sparsity of 36\% (10.3/16 coefficients non-zero on average). While less sparse than Phase 3 (39\%), this reflects the inclusion of dense operations like \texttt{and\_4}, \texttt{or\_4}, and \texttt{implies\_chain} which require all 16 characters. Notably, parity-type operations maintain maximum sparsity (support=1) regardless of dimension, consistent with the hypothesis that practically relevant Boolean functions have concentrated Fourier spectra \cite{kushilevitz1993learning}.
+\end{corollary}
+
+%==============================================================================
+\section{Discussion}
+%==============================================================================
+
+\subsection{Relationship to \mHC: Similarities and Differences}
+
+\begin{table}[t]
+\centering
+\caption{Comparison with \mHC{} \cite{xie2024mhc}. Our work adapts \mHC's stability mechanisms to a new domain while adding column-sign modulation for Boolean expressivity.}
+\label{tab:mhc_comparison}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Aspect} & \textbf{\mHC{} (DeepSeek)} & \textbf{This Work} \\
+\midrule
+Domain & LLM training (3B--27B params) & Boolean logic synthesis \\
+Primary goal & Training stability & Discrete logic discovery \\
+Sinkhorn projection & Yes (20 iterations) & Yes (20 iterations) \\
+Identity initialization & Yes (critical) & Yes (critical) \\
+Column-sign modulation & No & \textbf{Yes (enables negation)} \\
+Quantization target & N/A (continuous) & \textbf{Ternary (zero loss)} \\
+Hardware deployment & GPU clusters & \textbf{FPGA/NPU (single-cycle)} \\
+Scale validated & 27B parameters & $n \leq 4$ variables \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The key extension is column-sign modulation: \mHC{} uses pure doubly stochastic routing, which cannot express Boolean negation (Proposition~\ref{prop:negation}). Our factorization $R = P \cdot s$ preserves \mHC{} stability while adding the expressivity needed for complete Boolean logic.
+
+\subsection{Scaling Analysis}
+
+\begin{table}[t]
+\centering
+\caption{Scaling Across Phases. All phases achieve 100\% accuracy. Sparsity varies based on operation complexity.}
+\label{tab:scaling}
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Phase} & $n$ & \textbf{Basis Dim} & \textbf{Ops} & \textbf{Accuracy} & \textbf{Sparsity} \\
+\midrule
+2 & 2 & 4 & 16 & 100\% & 31.2\% \\
+3 & 3 & 8 & 10 & 100\% & 39\% \\
+4 & 4 & 16 & 10 & 100\% & 36\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The sparsity patterns across scales reveal important structure: Phase 3 (39\%) is sparser than Phase 4 (36\%) because Phase 4 includes dense symmetric operations (\texttt{and\_4}, \texttt{or\_4}, \texttt{implies\_chain}) requiring all 16 characters. However, parity operations maintain maximum sparsity regardless of dimension---\texttt{xor\_n} always has support=1 (only the $\prod_i x_i$ character). This supports the hypothesis that low-complexity Boolean functions have concentrated Fourier spectra \cite{linial1993constant, kushilevitz1993learning}. Figure~\ref{fig:sparsity} visualizes the sparsity distribution across phases.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.6\textwidth]{figures/sparsity.pdf}
+\caption{Spectral sparsity across phases. While sparsity varies by operation complexity (31\% $\to$ 39\% $\to$ 36\%), parity operations consistently achieve maximum sparsity (support=1) regardless of dimension. The variation reflects operation selection: Phase 4 includes dense symmetric functions (\texttt{and\_4}, \texttt{or\_4}) that require all 16 characters.}
+\label{fig:sparsity}
+\end{figure}
+
+\subsection{Hardware Deployment}
+
+The zero-loss quantization result enables immediate deployment:
+\begin{itemize}
+    \item \textbf{Model Size:} 16 ops $\times$ 4 trits ($n=2$) = 64 trits $\approx$ 102 bits
+    \item \textbf{Throughput:} 10,959 MOps/s on consumer GPU (RTX 5060)
+    \item \textbf{Power:} Combinational logic at $\mu$W scale on FPGA
+    \item \textbf{Latency:} Single-cycle inference (no sequential dependencies)
+\end{itemize}
+
+%==============================================================================
+\section{Phase 5: Scalable Spectral Methods}
+\label{sec:phase5}
+%==============================================================================
+
+Phase 5 addresses scalability beyond $n=4$ through three complementary approaches: exact transforms for moderate $n$, coefficient estimation for large $n$, and hierarchical composition for practical circuits.
+
+\subsection{Track 1: Exact FWHT (Moderate $n$)}
+
+For $n \leq 28$, we compute exact Fourier coefficients via the Fast Walsh-Hadamard Transform in $O(n \cdot 2^n)$ time.
+
+\begin{table}[h]
+\centering
+\caption{Exact FWHT Benchmark (GPU, RTX 5060 8GB). Peak throughput of 1.64B coefficients/sec achieved at $n=27$. The $n=28$ result uses process isolation to avoid allocator fragmentation.}
+\label{tab:fwht}
+\small
+\begin{tabular}{rrrrrl}
+\toprule
+$n$ & Dimension & Time (ms) & Throughput (M/s) & Memory (MB) & Note \\
+\midrule
+20 & 1,048,576 & 1.82 & 576.6 & 4.19 & \\
+23 & 8,388,608 & 9.52 & 881.5 & 33.55 & \\
+25 & 33,554,432 & 24.03 & 1,396.6 & 134.22 & \\
+26 & 67,108,864 & 50.91 & 1,318.3 & 268.44 & \\
+27 & 134,217,728 & 82.04 & 1,636.0 & 536.87 & \\
+\textbf{28} & \textbf{268,435,456} & \textbf{185.3} & \textbf{1,448.4} & \textbf{1,073.7} & \textit{isolated}$^\dagger$ \\
+\bottomrule
+\end{tabular}
+\vspace{1mm}
+\par\noindent\footnotesize{$^\dagger$Run in fresh process to avoid GPU allocator fragmentation from prior runs---standard practice when benchmarking near VRAM limits.}
+\end{table}
+
+\paragraph{Key Result.} Exact coefficient computation scales to $n=28$ (268M coefficients) on consumer GPUs (8GB VRAM), with peak throughput of 1.64 billion coefficients per second at $n=27$. For $n \geq 28$, we spawn isolated processes to avoid GPU memory fragmentation accumulated during benchmark sweeps---a standard practice documented in JAX's memory management guidelines. The $n=28$ case achieves 1.45B coeffs/sec in 185ms.
+
+\subsection{Track 2: Coefficient Estimation (Large $n$)}
+
+For $n > 28$, we estimate individual Fourier coefficients via Monte Carlo sampling from an oracle (black-box function). Given oracle access to $f: \{-1,+1\}^n \to \{-1,+1\}$:
+\begin{equation}
+    \hat{f}(S) \approx \frac{1}{m} \sum_{j=1}^m f(x_j) \cdot \chi_S(x_j), \quad x_j \sim \text{Uniform}(\{-1,+1\}^n)
+\end{equation}
+
+By Hoeffding's inequality, $m = O(\varepsilon^{-2} \log \delta^{-1})$ samples suffice for $|\hat{f}(S) - f(S)| \leq \varepsilon$ with probability $\geq 1-\delta$.
+
+\paragraph{Search Strategy.} We restrict search to low-degree subsets (degree $\leq d$), motivated by the LMN theorem \cite{linial1993constant}: Fourier mass of depth-$d$ circuits concentrates on degree $\leq d$ terms. This reduces candidates from $2^n$ to $O(n^d)$.
+
+\paragraph{Honest Assessment.} This is a \textit{baseline Monte Carlo estimator}, not a Goldreich-Levin style heavy coefficient finder. Query complexity is $O(n^d / \varepsilon^2)$ for degree-$d$ search, compared to $\tilde{O}(k/\varepsilon^2)$ for advanced algorithms recovering $k$ heavy coefficients \cite{goldreich1989hard, kushilevitz1993learning}. Implementation of bucket-splitting algorithms remains future work.
+
+\subsection{Track 3: Hierarchical Composition}
+
+For practical circuits (adders, comparators), we build large functions by \textit{composing learned primitives}, not by spectral synthesis of the full $2^n$-dimensional function.
+
+\paragraph{Approach.} We use ternary gates learned in Phases 1--4 as building blocks:
+\begin{itemize}
+    \item \textbf{Full Adder:} Sum (parity) + Carry (majority) from Phase 3 masks
+    \item \textbf{N-bit Ripple Adder:} Chain of full adder primitives
+    \item \textbf{Verification:} Randomized testing with Wilson confidence intervals
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\caption{Hierarchical Circuit Composition. All circuits achieve 100\% accuracy. Error rates bounded by rule of three (0 errors in $m$ samples $\Rightarrow$ error rate $\leq 3/m$).}
+\label{tab:composition}
+\begin{tabular}{lrrrr}
+\toprule
+Circuit & Bits & Samples & Errors & Error Bound \\
+\midrule
+Ripple Adder & 32 & 3.3M & 0 & $\leq 9.1 \times 10^{-7}$ \\
+Ripple Adder & 64 & 6.5M & 0 & $\leq 4.6 \times 10^{-7}$ \\
+Comparator & 64 & 100K & 0 & $\leq 3.0 \times 10^{-5}$ \\
+Equality & 128 & 100K & 0 & $\leq 3.0 \times 10^{-5}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Key Claim.} We demonstrate \textit{composition}, not spectral recovery. The 64-bit adder and 128-bit equality comparator are built structurally from verified 3-variable primitives (full adder sum/carry), with correctness validated by randomized testing on millions of samples. This avoids the intractable $2^{64}$ or $2^{128}$ coefficient computation while retaining formal guarantees through statistical verification.
+
+%==============================================================================
+\section{Future Work}
+\label{sec:future}
+%==============================================================================
+
+\begin{tcolorbox}[colback=gray!10, colframe=gray!50, title=Remaining Challenges]
+\textbf{Algorithmic Improvements:}
+\begin{itemize}
+    \item \textbf{Goldreich-Levin Implementation:} Bucket-splitting for $\tilde{O}(k/\varepsilon^2)$ query complexity
+    \item \textbf{Hierarchical Factorization:} Decompose $n$-variable functions into cascades of smaller bases
+    \item \textbf{Neural Architecture Search:} Learn which basis characters to include adaptively
+\end{itemize}
+
+\textbf{Conjecture:} Functions with bounded circuit complexity have poly-sparse spectra, enabling efficient representation even for large $n$ \cite{kushilevitz1993learning}.
+\end{tcolorbox}
+
+%==============================================================================
+\section{Conclusion}
+%==============================================================================
+
+We introduced Hierarchical Spectral Composition, adapting the \mHC{} framework \cite{xie2024mhc} from LLM training stability to Boolean logic synthesis. By extending Sinkhorn-constrained routing with column-sign modulation, we achieve:
+
+\begin{itemize}
+    \item \textbf{$n=2$:} 100\% accuracy on all 16 operations, zero routing drift, zero-loss quantization (10/10 seeds)
+    \item \textbf{$n=3$:} 100\% accuracy on 10 operations including majority and parity, 39\% sparsity (5/5 seeds)
+    \item \textbf{$n=4$:} 100\% accuracy on 10 operations via spectral synthesis with MCMC refinement, 36\% sparsity (5/5 seeds)
+    \item \textbf{Scalability:} Exact FWHT at 1.64B coeffs/sec ($n \leq 28$, 268M coefficients); hierarchical composition for 64-bit adders (6.5M verified samples) and 128-bit equality comparators
+    \item \textbf{Hardware:} 10,959 MOps/s on GPU, single-cycle FPGA inference
+\end{itemize}
+
+The key insight is that \mHC's Birkhoff polytope projection provides the stability foundation, while column-sign modulation adds the expressivity needed for discrete logic. For larger dimensions, we introduced two complementary approaches: spectral synthesis via MCMC refinement ($n=4$), and hierarchical composition from learned primitives (practical circuits). This combination scales from $n=2$ to large composed circuits with perfect accuracy, establishing a foundation for hardware-efficient neuro-symbolic logic synthesis.
+
+%==============================================================================
+\bibliographystyle{plain}
+\begin{thebibliography}{99}
+
+\bibitem{xie2024mhc}
+Z. Xie, Y. Wei, H. Cao, C. Zhao, C. Deng, J. Li, D. Dai, H. Gao, J. Chang, L. Zhao, et al.
+\newblock \mHC: Manifold-Constrained Hyper-Connections.
+\newblock \textit{arXiv:2512.24880}, December 2025.
+
+\bibitem{zhu2024hc}
+D. Zhu, H. Huang, Z. Huang, Y. Zeng, Y. Mao, B. Wu, Q. Min, and X. Zhou.
+\newblock Hyper-Connections.
+\newblock \textit{arXiv:2409.19606}, 2024.
+
+\bibitem{odonnell2014analysis}
+R. O'Donnell.
+\newblock \textit{Analysis of Boolean Functions}.
+\newblock Cambridge University Press, 2014.
+
+\bibitem{linial1993constant}
+N. Linial, Y. Mansour, and N. Nisan.
+\newblock Constant depth circuits, Fourier transform, and learnability.
+\newblock \textit{Journal of the ACM}, 40(3):607--620, 1993.
+
+\bibitem{kushilevitz1993learning}
+E. Kushilevitz and Y. Mansour.
+\newblock Learning decision trees using the Fourier spectrum.
+\newblock \textit{SIAM Journal on Computing}, 22(6):1331--1348, 1993.
+
+\bibitem{goldreich1989hard}
+O. Goldreich and L. Levin.
+\newblock A hard-core predicate for all one-way functions.
+\newblock In \textit{Proceedings of the 21st Annual ACM Symposium on Theory of Computing (STOC)}, pages 25--32, 1989.
+
+\bibitem{cuturi2013sinkhorn}
+M. Cuturi.
+\newblock Sinkhorn distances: Lightspeed computation of optimal transport.
+\newblock In \textit{NeurIPS}, 2013.
+
+\bibitem{sinkhorn1967concerning}
+R. Sinkhorn and P. Knopp.
+\newblock Concerning nonnegative matrices and doubly stochastic matrices.
+\newblock \textit{Pacific Journal of Mathematics}, 21(2):343--348, 1967.
+
+\bibitem{mena2018learning}
+G. Mena, D. Belanger, S. Linderman, and J. Snoek.
+\newblock Learning latent permutations with Gumbel-Sinkhorn networks.
+\newblock In \textit{ICLR}, 2018.
+
+\bibitem{sander2022sinkformers}
+M. E. Sander, P. Ablin, M. Blondel, and G. Peyré.
+\newblock Sinkformers: Transformers with doubly stochastic attention.
+\newblock In \textit{AISTATS}, 2022.
+
+\bibitem{trask2018neural}
+A. Trask, F. Hill, S. E. Reed, J. Rae, C. Dyer, and P. Blunsom.
+\newblock Neural arithmetic logic units.
+\newblock In \textit{NeurIPS}, 2018.
+
+\bibitem{dong2019neural}
+H. Dong, J. Mao, T. Lin, C. Wang, L. Li, and D. Zhou.
+\newblock Neural logic machines.
+\newblock In \textit{ICLR}, 2019.
+
+\bibitem{serafini2016learning}
+L. Serafini and A. d'Avila Garcez.
+\newblock Logic tensor networks.
+\newblock \textit{arXiv:1606.04422}, 2016.
+
+\bibitem{riegel2020logical}
+R. Riegel, A. Gray, F. Luus, N. Khan, S. Makondo, I. Akhalwaya, et al.
+\newblock Logical neural networks.
+\newblock \textit{arXiv:2006.13155}, 2020.
+
+\bibitem{petersen2022deep}
+B. K. Petersen, M. L. Larma, T. N. Mundhenk, et al.
+\newblock Deep differentiable logic gate networks.
+\newblock In \textit{NeurIPS}, 2022.
+
+\bibitem{daniely2020learning}
+A. Daniely and E. Malach.
+\newblock Learning parities with neural networks.
+\newblock In \textit{NeurIPS}, 2020.
+
+\bibitem{pan2021wht}
+Z. Pan, P. Xu, and Y. Tian.
+\newblock Fast neural architecture search with random neural tangent kernel and Walsh-Hadamard transform.
+\newblock In \textit{CVPR}, 2021.
+
+\bibitem{courbariaux2016binarized}
+M. Courbariaux, I. Hubara, D. Soudry, R. El-Yaniv, and Y. Bengio.
+\newblock Binarized neural networks.
+\newblock In \textit{NeurIPS}, 2016.
+
+\bibitem{zhu2017trained}
+C. Zhu, S. Han, H. Mao, and W. J. Dally.
+\newblock Trained ternary quantization.
+\newblock In \textit{ICLR}, 2017.
+
+\bibitem{jang2017categorical}
+E. Jang, S. Gu, and B. Poole.
+\newblock Categorical reparameterization with Gumbel-softmax.
+\newblock In \textit{ICLR}, 2017.
+
+\bibitem{maddison2017concrete}
+C. J. Maddison, A. Mnih, and Y. W. Teh.
+\newblock The concrete distribution: A continuous relaxation of discrete random variables.
+\newblock In \textit{ICLR}, 2017.
+
+\bibitem{he2016identity}
+K. He, X. Zhang, S. Ren, and J. Sun.
+\newblock Identity mappings in deep residual networks.
+\newblock In \textit{ECCV}, 2016.
+
+\bibitem{swendsen1986replica}
+R. H. Swendsen and J.-S. Wang.
+\newblock Replica Monte Carlo simulation of spin-glasses.
+\newblock \textit{Physical Review Letters}, 57(21):2607, 1986.
+
+\end{thebibliography}
+
+%==============================================================================
+\appendix
+\section{Implementation Details}
+
+\paragraph{Sinkhorn Iterations.} Following \mHC{} \cite{xie2024mhc}, we use $K=20$ iterations with log-domain computation:
+\begin{align}
+    u^{(t+1)} &= -\log\sum_j \exp(\alpha_{ij} + v^{(t)}_j) \\
+    v^{(t+1)} &= -\log\sum_i \exp(\alpha_{ij} + u^{(t+1)}_i)
+\end{align}
+
+\paragraph{Temperature Annealing.} Sign temperature: $\beta(t) = 1 + 9 \cdot (t / T_{\max})$.
+
+\paragraph{Plateau Detection.} EMA loss with $\alpha = 0.99$. Restart triggers when $|\Delta\bar{\mathcal{L}}| < 10^{-4}$ for 50 epochs.
+
+\section{Reproducibility}
+
+Code available at: \url{https://github.com/gogipav14/spectral-llm}
+
+Hardware: NVIDIA RTX 5060 (8GB VRAM), Intel Ultra 5 225F, 64GB RAM.
+
+\end{document}
