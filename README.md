@@ -155,12 +155,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Research supported by [Institution/Grant]
-- Thanks to [Collaborators/Contributors]
+- This development was instigated by asking a series of questions and their quest led me here.
 
 ## Contact
 
-For questions or collaboration inquiries, please open an issue or contact [your email].
+For questions or collaboration inquiries, please open an issue or contact gorgipavlov [at] gmail.com .
 
 ---
 
