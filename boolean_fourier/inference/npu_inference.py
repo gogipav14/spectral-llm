@@ -28,15 +28,16 @@ import time
 
 # Phase 1: 4 logic operations over 4-dim basis [1, a, b, ab]
 # Mathematically verified masks (Boolean Fourier analysis):
+# CORRECTED to match canonical source: train_phase1_fixed.py lines 54-59
 #   XOR: f(a,b) = ab → sign(ab) → [0, 0, 0, 1]
-#   AND: f(a,b) = 1 iff a=b=+1 → sign(-1 + a + b + ab) → [-1, 1, 1, 1]
-#   OR: f(a,b) = -1 iff a=b=-1 → sign(1 + a + b - ab) → [1, 1, 1, -1]
-#   IMPLIES: f(a,b) = ¬a ∨ b → sign(1 - a + b + ab) → [1, -1, 1, 1]
+#   AND: f(a,b) = 1 iff a=b=+1 → sign(1 + a + b - ab) → [1, 1, 1, -1]
+#   OR: f(a,b) = -1 iff a=b=-1 → sign(-1 + a + b + ab) → [-1, 1, 1, 1]
+#   IMPLIES: f(a,b) = ¬a ∨ b → sign(-1 - a + b - ab) → [-1, -1, 1, -1]
 PHASE1_MASKS = np.array([
     [0, 0, 0, 1],      # XOR: sign(ab)
-    [-1, 1, 1, 1],     # AND: sign(-1 + a + b + ab)
-    [1, 1, 1, -1],     # OR: sign(1 + a + b - ab)
-    [1, -1, 1, 1],     # IMPLIES: sign(1 - a + b + ab)
+    [1, 1, 1, -1],     # AND: sign(1 + a + b - ab)  # FIXED: was swapped with OR
+    [-1, 1, 1, 1],     # OR: sign(-1 + a + b + ab)  # FIXED: was swapped with AND
+    [-1, -1, 1, -1],   # IMPLIES: sign(-1 - a + b - ab)  # FIXED: corrected signs
 ], dtype=np.int8)
 
 PHASE1_OP_NAMES = ['xor', 'and', 'or', 'implies']
@@ -46,16 +47,16 @@ PHASE1_OP_NAMES = ['xor', 'and', 'or', 'implies']
 # Next 4: negated versions (flip all signs)
 # Final 8: projection and conditional ops
 PHASE2_MASKS = np.array([
-    # Linear ops (corrected)
+    # Linear ops (corrected to match PHASE1_MASKS)
     [0, 0, 0, 1],      # 0: XOR: sign(ab)
-    [-1, 1, 1, 1],     # 1: AND: sign(-1 + a + b + ab)
-    [1, 1, 1, -1],     # 2: OR: sign(1 + a + b - ab)
-    [1, -1, 1, 1],     # 3: IMPLIES: sign(1 - a + b + ab)
-    # Negated ops (flip all signs)
+    [1, 1, 1, -1],     # 1: AND: sign(1 + a + b - ab)  # FIXED
+    [-1, 1, 1, 1],     # 2: OR: sign(-1 + a + b + ab)  # FIXED
+    [-1, -1, 1, -1],   # 3: IMPLIES: sign(-1 - a + b - ab)  # FIXED
+    # Negated ops (flip all signs from corrected Phase 1 masks)
     [0, 0, 0, -1],     # 4: XNOR: sign(-ab)
-    [1, -1, -1, -1],   # 5: NAND: sign(1 - a - b - ab)
-    [-1, -1, -1, 1],   # 6: NOR: sign(-1 - a - b + ab)
-    [-1, 1, -1, -1],   # 7: NOT_IMPLIES: sign(-1 + a - b - ab)
+    [-1, -1, -1, 1],   # 5: NAND: negation of AND  # FIXED
+    [1, -1, -1, -1],   # 6: NOR: negation of OR  # FIXED
+    [1, 1, -1, 1],     # 7: NOT_IMPLIES: negation of IMPLIES  # FIXED
     # Projection ops
     [0, 1, 0, 0],      # 8: project_a (f(a,b) = a)
     [0, 0, 1, 0],      # 9: project_b (f(a,b) = b)

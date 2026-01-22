@@ -22,12 +22,12 @@ class BooleanFourierPhase1(nnx.Module):
     def __init__(self, rngs: nnx.Rngs):
         # Ternary mask ROM - fixed weights, not trainable
         # Shape: [4, 4] - 4 operations, 4 basis coefficients each
-        # Derived from Boolean Fourier analysis (see derivation below)
+        # CORRECTED to match canonical source: train_phase1_fixed.py lines 54-59
         masks = jnp.array([
             [0, 0, 0, 1],      # XOR: pure parity (ab)
-            [-1, 1, 1, 1],     # AND: -1 + a + b + ab (scaled)
-            [1, 1, 1, -1],     # OR: 1 + a + b - ab (scaled)
-            [1, -1, 1, 1],     # IMPLIES: 1 - a + b + ab (scaled)
+            [1, 1, 1, -1],     # AND: 1 + a + b - ab (scaled)  # FIXED: was swapped with OR
+            [-1, 1, 1, 1],     # OR: -1 + a + b + ab (scaled)  # FIXED: was swapped with AND
+            [-1, -1, 1, -1],   # IMPLIES: -1 - a + b - ab (scaled)  # FIXED: corrected signs
         ], dtype=jnp.float32)
 
         # Store as non-trainable parameter
