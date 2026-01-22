@@ -2,13 +2,14 @@
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![arXiv](https://img.shields.io/badge/arXiv-XXXX.XXXXX-b31b1b.svg)](https://arxiv.org/abs/2601.13953)
+[![arXiv](https://img.shields.io/badge/arXiv-2601.13953-b31b1b.svg)](https://arxiv.org/abs/2601.13953)
 <!-- Add DOI badge after Zenodo registration:
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
 -->
 
-Research code for the paper **"Differentiable Logic Synthesis: Spectral Coefficient Selection via
-Sinkhorn-Constrained Composition"** by Gorgi Pavlov.
+Research code for the paper **"Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition"** by Gorgi Pavlov.
+
+**Paper**: [arXiv:2601.13953](https://arxiv.org/abs/2601.13953) | [PDF](https://arxiv.org/pdf/2601.13953)
 
 ## Overview
 
@@ -41,7 +42,7 @@ Learning precise Boolean logic via gradient descent remains challenging: neural 
 
 ```bash
 # Clone repository
-git clone https://github.com/YOUR_USERNAME/spectral-llm.git
+git clone https://github.com/gogipav14/spectral-llm.git
 cd spectral-llm
 
 # Install dependencies
@@ -136,11 +137,11 @@ See the paper for detailed analysis and ablation studies.
 If you use this code in your research, please cite:
 
 ```bibtex
-@article{yourname2025spectral,
-  title={[Paper Title]},
-  author={[Author Names]},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
-  year={2025}
+@article{pavlov2026differentiable,
+  title={Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition},
+  author={Pavlov, Gorgi},
+  journal={arXiv preprint arXiv:2601.13953},
+  year={2026}
 }
 ```
 
@@ -155,12 +156,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
+- Gorgi Pavlov, Ph.D. - Lehigh University & Johnson and Johnson
 - This development was instigated by asking a series of questions and their quest led me here.
 
 ## Contact
 
-For questions or collaboration inquiries, please open an issue or contact gorgipavlov [at] gmail.com .
+For questions or collaboration inquiries, please open an issue or contact gorgipavlov@gmail.com.
 
 ---
 
-**Note:** This is research code. For production use, see the [spectralbit](https://github.com/YOUR_USERNAME/spectralbit) package.
+**Note:** This is research code. For production use, see the [spectralbit](https://github.com/gogipav14/spectralbit) package.
