@@ -17,7 +17,7 @@ from pathlib import Path
 import json
 from datetime import datetime
 
-from spectral_synthesis import (
+from .spectral_synthesis import (
     synthesize_ternary_mask,
     compute_mask_accuracy,
     boolean_fourier_basis,

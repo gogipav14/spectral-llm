@@ -33,15 +33,15 @@ from typing import Callable, Dict, Tuple, List
 from datetime import datetime
 import json
 
-from spectral_synthesis import (
+from .spectral_synthesis import (
     boolean_fourier_basis,
     estimate_fourier_coefficients,
     quantize_to_ternary,
     compute_mask_accuracy,
     refine_mask_parallel_tempering,
 )
-from spectral_synthesis_4var import PHASE4_OPERATIONS, CHAR_NAMES_4VAR
-from utils.diagnostics import (
+from .spectral_synthesis_4var import PHASE4_OPERATIONS, CHAR_NAMES_4VAR
+from ..utils.diagnostics import (
     jaccard_trajectory,
     eigenspectrum_svd,
     spectral_compression_summary,
@@ -273,7 +273,7 @@ def refine_mask_mcmc_counted(
     if rng_key is None:
         rng_key = random.PRNGKey(0)
 
-    from spectral_synthesis import gibbs_step
+    from .spectral_synthesis import gibbs_step
 
     mask = initial_mask.copy()
     best_mask = mask
