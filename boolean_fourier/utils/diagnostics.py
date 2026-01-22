@@ -424,7 +424,7 @@ def load_phase4_masks(checkpoint_path: Optional[str] = None) -> Dict[str, np.nda
         Dictionary mapping operation name to mask
     """
     if checkpoint_path is None:
-        checkpoint_path = Path(__file__).parent.parent / 'phase4' / 'v6' / 'checkpoints' / 'phase4_synthesis' / 'phase4_synthesis_results.json'
+        checkpoint_path = Path(__file__).parent.parent / 'phase4' / 'checkpoints' / 'phase4_synthesis' / 'phase4_synthesis_results.json'
 
     with open(checkpoint_path, 'r') as f:
         data = json.load(f)
