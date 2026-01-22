@@ -380,7 +380,7 @@ def get_gd_protocol() -> Dict:
 def load_phase1_masks() -> Dict[str, np.ndarray]:
     """Load canonical Phase 1 masks.
 
-    Source: boolean_fourier/inference/flax_boolean_fourier.py
+    Source: train_phase1_fixed.py lines 54-59 (canonical source)
     Basis: [1, a, b, ab]
 
     Returns:
@@ -388,9 +388,9 @@ def load_phase1_masks() -> Dict[str, np.ndarray]:
     """
     return {
         'xor': np.array([0, 0, 0, 1]),
-        'and': np.array([-1, 1, 1, 1]),
-        'or': np.array([1, 1, 1, -1]),
-        'implies': np.array([1, -1, 1, 1]),
+        'and': np.array([1, 1, 1, -1]),      # CORRECTED: was [-1, 1, 1, 1]
+        'or': np.array([-1, 1, 1, 1]),       # CORRECTED: was [1, 1, 1, -1]
+        'implies': np.array([-1, -1, 1, -1]),  # CORRECTED: was [1, -1, 1, 1]
     }
 
 
