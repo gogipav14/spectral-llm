@@ -151,7 +151,7 @@ def test_xor_representation():
 
 
 def test_and_representation():
-    """Test that AND can be represented with ternary mask [-1, 1, 1, 1]."""
+    """Test that AND can be represented with ternary mask [1, 1, 1, -1]."""
     print("\nTesting AND representation...")
 
     # AND truth table in {-1, +1}
@@ -168,8 +168,8 @@ def test_and_representation():
     a, b = inputs[:, 0], inputs[:, 1]
     features = jnp.stack([jnp.ones_like(a), a, b, a * b], axis=-1)
 
-    # AND mask: [-1, 1, 1, 1]
-    and_mask = jnp.array([-1, 1, 1, 1])
+    # AND mask: [1, 1, 1, -1] (CORRECTED from canonical source)
+    and_mask = jnp.array([1, 1, 1, -1])
 
     # Compute output
     outputs = jnp.sign(features @ and_mask)
@@ -223,12 +223,12 @@ def test_ternary_sparsity():
     """Test that ternary masks have reasonable sparsity for n=2."""
     print("\nTesting ternary sparsity...")
 
-    # Known optimal masks from paper (Table 2)
+    # Known optimal masks from canonical source (train_phase1_fixed.py lines 54-59)
     masks = {
         'XOR': jnp.array([0, 0, 0, 1]),
-        'AND': jnp.array([-1, 1, 1, 1]),
-        'OR': jnp.array([1, 1, 1, -1]),
-        'IMPLIES': jnp.array([1, -1, 1, 1]),
+        'AND': jnp.array([1, 1, 1, -1]),      # FIXED: was [-1, 1, 1, 1]
+        'OR': jnp.array([-1, 1, 1, 1]),       # FIXED: was [1, 1, 1, -1]
+        'IMPLIES': jnp.array([-1, -1, 1, -1]),  # FIXED: was [1, -1, 1, 1]
     }
 
     total_zeros = 0
