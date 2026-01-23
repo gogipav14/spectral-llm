@@ -92,10 +92,10 @@ def compute_loss_and_soft_weights(
     # Apply mask
     output = jnp.sum(features * w_soft, axis=-1)  # [batch, n_bits]
 
-    # Binary cross-entropy style loss
-    y = (targets + 1) / 2  # {0, 1}
-    p = jax.nn.sigmoid(output * 5.0)
-    loss = -jnp.mean(y * jnp.log(p + 1e-10) + (1 - y) * jnp.log(1 - p + 1e-10))
+    # Hamming loss (more stable than BCE for Boolean functions)
+    # Normalize output with tanh for soft approximation
+    output = jnp.tanh(output)
+    loss = jnp.mean((1 - output * targets) / 2)
 
     return loss, w_soft
 
