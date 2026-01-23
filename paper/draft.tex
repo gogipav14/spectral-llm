@@ -331,7 +331,14 @@ All validation tests pass except orthogonality (which is not critical for accura
 \end{itemize}
 
 \paragraph{Learning Dynamics: Jaccard Trajectory Analysis.}
-To validate the ``topology first, definition second'' hypothesis from the outset, we tracked support convergence via Jaccard similarity during Phase 1 training. Using the learned ternary masks themselves as ground truth, we measure how quickly GD discovers which coefficients matter. Across all 4 operations with 3 random seeds each, GD achieves mean \textbf{AUC(Jaccard) = 0.980 ± 0.036}, demonstrating near-perfect topology discovery. This establishes the baseline: when gradient descent succeeds ($n=2$), it learns the correct support structure almost immediately---Jaccard trajectories reach 1.0 within the first few hundred steps for AND and OR, slightly longer for XOR due to the parity character's unique spectral signature. This clean convergence behavior provides the reference point for understanding the more complex dynamics in Phase 3 where accuracy plateaus but topology learning continues.
+To validate the ``topology first, definition second'' hypothesis from the outset, we tracked support convergence via Jaccard similarity during Phase 1 training. Using the learned ternary masks themselves as ground truth, we measure how quickly GD discovers which coefficients matter. Across all 4 operations with 3 random seeds each, GD achieves mean \textbf{AUC(Jaccard) = 0.980 ± 0.036}, demonstrating near-perfect topology discovery (Figure~\ref{fig:phase1_jaccard}). This establishes the baseline: when gradient descent succeeds ($n=2$), it learns the correct support structure almost immediately---Jaccard trajectories reach 1.0 within the first few hundred steps for AND and OR, slightly longer for XOR due to the parity character's unique spectral signature. This clean convergence behavior provides the reference point for understanding the more complex dynamics in Phase 3 where accuracy plateaus but topology learning continues.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/phase1_jaccard_trajectories.pdf}
+\caption{\textbf{Phase 1 Jaccard Trajectory Analysis.} Support topology convergence for all 4 operations (XOR, AND, OR, IMPLIES) across 3 random seeds each. Jaccard similarity measures overlap between learned support (top-$k$ coefficients by magnitude) and optimal support. AUC values near 1.0 show gradient descent discovers correct topology immediately when it succeeds.}
+\label{fig:phase1_jaccard}
+\end{figure}
 
 \subsection{Phase 2: Sinkhorn-Constrained Composition with Column-Sign Modulation}
 \label{sec:phase2}
@@ -548,7 +555,14 @@ The ablations reveal distinct failure modes:
 These results validate that \textit{all three components}---column-sign (extending \mHC), Sinkhorn constraints (from \mHC), and identity initialization (adapting \mHC)---are necessary for zero-loss convergence.
 
 \paragraph{Routing Manifold Diagnostics: Full 16-Operation System.}
-To verify that Sinkhorn projection maintains the doubly stochastic manifold constraint throughout training at scale, we extended Phase 2 to all 16 operations with full diagnostic logging. The routing matrix $P \in \mathbb{R}^{4 \times 16}$ is rectangular (4 primitive parents, 16 temporal children), requiring adaptation of the drift metric. We measure drift from the uniform baseline $U_{ij} = 1/4$ (the reference for rectangular doubly stochastic matrices). Across 3 random seeds training for 2000 steps, the system achieves mean accuracy of \textbf{85.97\% ± 6.34\%} with final routing drift of \textbf{3.316 ± 0.111}. This low drift confirms that manifold-constrained optimization remains stable even when scaling from 4 to 16 operations, validating the \mHC{} framework's applicability to hierarchical logic composition. The mean column entropy decreases during training, indicating convergence toward sparser routing patterns, while the identity-like initialization provides the strong inductive bias that enables reliable convergence.
+To verify that Sinkhorn projection maintains the doubly stochastic manifold constraint throughout training at scale, we extended Phase 2 to all 16 operations with full diagnostic logging. The routing matrix $P \in \mathbb{R}^{4 \times 16}$ is rectangular (4 primitive parents, 16 temporal children), requiring adaptation of the drift metric. We measure drift from the uniform baseline $U_{ij} = 1/4$ (the reference for rectangular doubly stochastic matrices). Across 3 random seeds training for 2000 steps, the system achieves mean accuracy of \textbf{85.97\% ± 6.34\%} with final routing drift of \textbf{3.316 ± 0.111} (Figure~\ref{fig:phase2_routing}). This low drift confirms that manifold-constrained optimization remains stable even when scaling from 4 to 16 operations, validating the \mHC{} framework's applicability to hierarchical logic composition. The mean column entropy decreases during training, indicating convergence toward sparser routing patterns, while the identity-like initialization provides the strong inductive bias that enables reliable convergence.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/phase2_routing_drift.pdf}
+\caption{\textbf{Phase 2 Routing Manifold Stability.} Routing drift evolution over training for the full 16-operation system (3 seeds). Drift is measured as Frobenius distance from uniform baseline for the rectangular $(4 \times 16)$ routing matrix. Low final drift (3.316 ± 0.111) confirms Sinkhorn projection maintains manifold constraint at scale.}
+\label{fig:phase2_routing}
+\end{figure}
 
 \subsection{Constructive Ternary Representability ($n=2$)}
 
@@ -873,6 +887,17 @@ This validates the spectral synthesis pipeline: for $n \geq 4$, exact coefficien
 \label{cor:sparsity}
 The 10 target operations for $n=4$ exhibit mean sparsity of 36\% (10.3/16 coefficients non-zero on average). While less sparse than Phase 3 (39\%), this reflects the inclusion of dense operations like \texttt{and\_4}, \texttt{or\_4}, and \texttt{implies\_chain} which require all 16 characters. Notably, parity-type operations maintain maximum sparsity (support=1) regardless of dimension, consistent with the hypothesis that practically relevant Boolean functions have concentrated Fourier spectra \cite{kushilevitz1993learning}.
 \end{corollary}
+
+\subsection{Unified Diagnostic Summary}
+
+Figure~\ref{fig:diagnostic_summary} synthesizes the diagnostic results across all four phases, validating the ``topology first, definition second'' thesis. Panel A shows Jaccard AUC progression: near-perfect at Phase 1 ($n=2$), declining but non-zero at Phase 3 ($n=3$) where accuracy plateaus, and moderate at Phase 4 ($n=4$) with GD warm-start. Panel B confirms high final accuracy across Phases 1-3. Panel C demonstrates the warm-start experiment result: WHT initialization (110 steps) dramatically outperforms random (1387 steps), pure GD (1557 steps), and WHT→GD (1393 steps). Panel D summarizes key findings, showing the transition from pure gradient learning at $n=2$ to hybrid spectral synthesis at $n \geq 3$.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.98\textwidth]{figures/diagnostic_summary.pdf}
+\caption{\textbf{Unified Diagnostic Summary Across All Phases.} (A) AUC(Jaccard) comparison showing topology learning quality across phases. (B) Final accuracy across Phases 1-3. (C) Phase 4 warm-start MCMC convergence: WHT initialization achieves fastest convergence. (D) Key insights summary validating ``topology first, definition second'' thesis and showing where exact spectral methods (WHT) surpass gradient-based approaches.}
+\label{fig:diagnostic_summary}
+\end{figure}
 
 %==============================================================================
 \section{Discussion}
