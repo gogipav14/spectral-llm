@@ -18,7 +18,7 @@ os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
 import jax.numpy as jnp
 import numpy as np
 from typing import Dict, Tuple
-from boolean_fourier_3var import (
+from .boolean_fourier_3var import (
     PHASE3_OPERATIONS,
     boolean_fourier_3var,
     CHAR_NAMES_3VAR,

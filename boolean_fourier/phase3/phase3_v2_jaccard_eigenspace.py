@@ -30,9 +30,9 @@ from typing import Callable, Dict, Tuple, List
 from datetime import datetime
 import json
 
-from logic3_dataset import create_phase3_train_test_split
-from boolean_fourier_3var import boolean_fourier_3var, PHASE3_OPERATIONS, CHAR_NAMES_3VAR
-from utils.diagnostics import (
+from .logic3_dataset import create_phase3_train_test_split
+from .boolean_fourier_3var import boolean_fourier_3var, PHASE3_OPERATIONS, CHAR_NAMES_3VAR
+from ..utils.diagnostics import (
     jaccard_trajectory,
     jaccard_final,
     eigenspectrum_svd,
