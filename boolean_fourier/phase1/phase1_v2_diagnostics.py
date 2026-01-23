@@ -25,8 +25,8 @@ from typing import Dict
 from datetime import datetime
 import json
 
-from logic_dataset import generate_logic_dataset, create_train_test_split, OP_NAMES
-from utils.diagnostics import (
+from .logic_dataset import generate_logic_dataset, create_train_test_split, OP_NAMES
+from ..utils.diagnostics import (
     jaccard_trajectory,
     eigenspectrum_svd,
     spectral_compression_summary,
@@ -71,9 +71,10 @@ def compute_loss_and_soft_weights(
     features = boolean_fourier_basis_2var(a, b)
     output = jnp.sum(features * w_soft, axis=-1)
 
-    y = (targets + 1) / 2
-    p = jax.nn.sigmoid(output * 5.0)
-    loss = -jnp.mean(y * jnp.log(p + 1e-10) + (1 - y) * jnp.log(1 - p + 1e-10))
+    # Hamming loss (more stable than BCE for Boolean functions)
+    # Normalize output with tanh for soft approximation
+    output = jnp.tanh(output)
+    loss = jnp.mean((1 - output * targets) / 2)
 
     return loss, w_soft
 
@@ -114,8 +115,8 @@ def train_operation_with_diagnostics(
     key = random.PRNGKey(seed)
 
     # Get data
-    a_train, b_train, y_train = train_data[op_name]
-    a_test, b_test, y_test = test_data[op_name]
+    a_train, b_train, y_train, _ = train_data[op_name]
+    a_test, b_test, y_test, _ = test_data[op_name]
 
     # Initialize logits
     key, init_key = random.split(key)
@@ -221,8 +222,7 @@ def run_phase1_diagnostics(n_seeds: int = 3, verbose: bool = True) -> Dict:
     # Generate dataset
     print("\nGenerating dataset...")
     n_train, n_test, n_bits = 2000, 500, 64
-    full_dataset = generate_logic_dataset(n_train + n_test, n_bits)
-    train_data, test_data = create_train_test_split(full_dataset, n_train, n_test)
+    train_data, test_data = create_train_test_split(n_train, n_test, n_bits)
     print(f"  Train: {n_train}, Test: {n_test}, Bits: {n_bits}")
 
     all_results = {

@@ -30,9 +30,9 @@ from functools import partial
 from datetime import datetime
 import json
 
-from temporal_dataset_v2 import create_temporal_v2_train_test_split, TEMPORAL_V2_OP_NAMES
-from hierarchical_r import sinkhorn_rectangular
-from utils.diagnostics import (
+from .temporal_dataset_v2 import create_temporal_v2_train_test_split, TEMPORAL_V2_OP_NAMES
+from .hierarchical_r import sinkhorn_rectangular
+from ..utils.diagnostics import (
     routing_stats,
     jaccard_final,
     DiagnosticsLogger,
@@ -278,7 +278,7 @@ def train_with_diagnostics(seed: int = 0, verbose: bool = True):
         temperature = temp_start * (temp_end / temp_start) ** progress
 
         # Cycle through all 16 operations
-        for op_id, op_name in enumerate(TEMPORAL_V2_OP_NAMES):
+        for op_id, op_name in TEMPORAL_V2_OP_NAMES.items():
             a, b, target, _ = train_data[op_name]
 
             # Sample batch
@@ -311,7 +311,7 @@ def train_with_diagnostics(seed: int = 0, verbose: bool = True):
 
             # Compute accuracy (average over all ops)
             accs = []
-            for op_id, op_name in enumerate(TEMPORAL_V2_OP_NAMES):
+            for op_id, op_name in TEMPORAL_V2_OP_NAMES.items():
                 a, b, target, _ = test_data[op_name]
                 acc = compute_accuracy(model.apply, state.params, a, b, target, logic_masks, op_id)
                 accs.append(acc)
@@ -336,7 +336,7 @@ def train_with_diagnostics(seed: int = 0, verbose: bool = True):
 
     # Final accuracy per operation
     final_accuracies = {}
-    for op_id, op_name in enumerate(TEMPORAL_V2_OP_NAMES):
+    for op_id, op_name in TEMPORAL_V2_OP_NAMES.items():
         a, b, target, _ = test_data[op_name]
         acc = compute_accuracy(model.apply, state.params, a, b, target, logic_masks, op_id)
         final_accuracies[op_name] = float(acc)

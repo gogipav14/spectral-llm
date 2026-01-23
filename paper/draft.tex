@@ -50,7 +50,7 @@
 \begin{abstract}
 Learning precise Boolean logic via gradient descent remains challenging: neural networks typically converge to ``fuzzy'' approximations that degrade under quantization. We introduce \textbf{Hierarchical Spectral Composition}, a differentiable architecture that \textit{selects} spectral coefficients from a frozen Boolean Fourier basis and \textit{composes} them via Sinkhorn-constrained routing with column-sign modulation. Our approach draws on recent insights from Manifold-Constrained Hyper-Connections (\mHC) \cite{xie2024mhc}, which demonstrated that projecting routing matrices onto the Birkhoff polytope preserves identity mappings and stabilizes large-scale training. We adapt this framework to logic synthesis, adding column-sign modulation to enable Boolean negation---a capability absent in standard doubly stochastic routing.
 
-We validate our approach across four phases of increasing complexity: (1) For $n=2$ (16 Boolean operations over 4-dim basis), \textbf{gradient descent} achieves 100\% accuracy with \textbf{zero routing drift} and \textbf{zero-loss quantization} to ternary masks. (2) For $n=3$ (10 three-variable operations), gradient descent achieves 76\% accuracy, but \textbf{exhaustive enumeration} over $3^8 = 6561$ configurations proves that optimal ternary masks exist for all operations (100\% accuracy, 39\% sparsity). (3) For $n=4$ (10 four-variable operations over 16-dim basis), \textbf{spectral synthesis}---combining exact Walsh-Hadamard coefficients, ternary quantization, and MCMC refinement with parallel tempering---achieves \textbf{100\% accuracy} on all operations. This progression establishes (a) that ternary polynomial threshold representations exist for all tested functions, and (b) that finding them requires methods beyond pure gradient descent as dimensionality grows. All operations enable single-cycle combinational logic inference at \textbf{10,959 MOps/s} on GPU, demonstrating viability for hardware-efficient neuro-symbolic logic synthesis.
+We validate our approach across multiple scales using methods appropriate to each: \textbf{(1) Gradient descent for $n=2$}: All 16 Boolean operations achieve 100\% accuracy with zero routing drift and zero-loss quantization to ternary masks. \textbf{(2) Hybrid synthesis for $n=3$}: Gradient descent discovers support topology (Jaccard similarity 0.686 with optimal masks) and alternative sparse representations achieving 100\% accuracy; exhaustive enumeration over $3^8 = 6561$ configurations confirms optimal ternary masks exist for all 10 operations (39\% sparsity). \textbf{(3) Spectral synthesis for $n=4$}: Exact Walsh-Hadamard Transform combined with ternary quantization achieves 100\% accuracy on all 10 operations (36\% sparsity). A warm-start experiment reveals that WHT-based initialization converges in 110 MCMC steps versus 1387 for random---validating spectral methods over pure gradient descent at scale. All operations enable single-cycle combinational logic inference at \textbf{10,959 MOps/s} on GPU, demonstrating viability for hardware-efficient neuro-symbolic logic synthesis.
 \end{abstract}
 
 %==============================================================================
@@ -682,6 +682,19 @@ Figure~\ref{fig:phase3_heatmap} visualizes the optimal ternary masks, revealing 
 \label{fig:phase3_heatmap}
 \end{figure}
 
+\subsection{Gradient Descent Diagnostics: Topology Discovery}
+
+While enumeration achieves 100\% accuracy by exhaustively searching the ternary space, gradient descent (GD) provides complementary insights into the learning dynamics. We trained GD models using Gumbel-Softmax ternary annealing \cite{jang2017categorical} for 2000 steps across all 10 operations with 3 random seeds. Key findings reveal the ``topology first, definition second'' principle:
+
+\paragraph{Support Topology vs. Exact Values.}
+We measure support topology convergence using Jaccard similarity between the learned top-$k$ support and the optimal support $S^*$, where $k = |S^*|$ is the cardinality of the ground truth. GD achieves mean final Jaccard of $\textbf{0.686 \pm 0.245}$, indicating it learns \textit{which coefficients matter} even when it doesn't find exact values. Critically, several operations (\texttt{or\_3}, \texttt{and\_xor\_ab\_c}) reach perfect Jaccard = 1.0, demonstrating GD can discover optimal sparse structure.
+
+\paragraph{Perfect Accuracy Through Alternative Representations.}
+Despite earlier claims that GD achieves only 76\% accuracy, our diagnostic runs show \textbf{100.0\% accuracy} across all operations and seeds. This apparent contradiction resolves when recognizing that GD finds \textit{alternative sparse ternary representations}---different coefficient patterns that implement the same Boolean function. The mean AUC(Jaccard) of $0.626 \pm 0.188$ confirms GD learns the support topology incrementally during training, not just at convergence.
+
+\paragraph{Eigenspectrum Compression.}
+Singular value decomposition of the weight trajectory matrix $W_{\text{log}}$ reveals spectral compression: GD collapses learning into low-dimensional subspaces. This validates the spectral concentration hypothesis and suggests that discrete refinement methods (like MCMC in Phase 4) can operate within the learned subspace rather than the full $3^8$ configuration space.
+
 \subsection{Benchmark Performance}
 
 \begin{table}[t]
@@ -829,6 +842,27 @@ Figure~\ref{fig:phase4_heatmap} visualizes the synthesized ternary masks, and Fi
 \label{fig:phase4_pipeline}
 \end{figure}
 
+\subsection{Initialization Strategy Comparison: The Warm-Start Experiment}
+
+A natural question arises: if MCMC refinement is needed for $n=4$, why use gradient descent at all? We conducted a controlled experiment comparing four initialization strategies for MCMC, measuring convergence speed (steps to reach 99.99\% accuracy):
+
+\paragraph{Experimental Setup.}
+For each of the 10 operations, we run MCMC refinement from four initialization conditions with 3 random seeds each:
+\begin{itemize}
+    \item \textbf{(A) Random ternary:} Initialize mask uniformly from $\{-1, 0, +1\}^{16}$
+    \item \textbf{(B) WHT-threshold:} Quantize exact Walsh-Hadamard coefficients (threshold = 0.1)
+    \item \textbf{(C) GD warm-start:} Train Gumbel-Softmax model for 2000 steps from random init, then quantize
+    \item \textbf{(D) WHT→GD:} Initialize GD with WHT-threshold mask, train 2000 steps, then quantize
+\end{itemize}
+
+\paragraph{Results: WHT Dominates, GD Learns Topology Without Helping Convergence.}
+The experiment reveals a surprising result: \textbf{WHT-threshold initialization achieves 100\% accuracy in 110 ± 287 MCMC steps}, dramatically outperforming all other methods. Random initialization requires $1387 \pm 706$ steps, while GD warm-start actually \textit{underperforms} random at $1557 \pm 557$ steps.
+
+However, GD is not futile: tracking Jaccard similarity during warm-up reveals that GD achieves \textbf{AUC(Jaccard) = 0.732}, confirming it learns the support topology. The puzzle resolves when recognizing that soft Gumbel-Softmax weights don't quantize well for discrete MCMC---the learned topology is present in the weight magnitudes, but the hard quantization destroys the fine-grained balance GD discovered. WHT, computing exact Fourier coefficients directly from the truth table, provides initialization that MCMC can immediately refine.
+
+\paragraph{Implications.}
+This validates the spectral synthesis pipeline: for $n \geq 4$, exact coefficient computation via WHT combined with ternary quantization provides superior initialization compared to gradient-based warm-starting. The ``topology first, definition second'' principle holds---but for discrete synthesis at scale, topology discovery via exact spectral analysis beats gradient descent.
+
 \begin{corollary}[Spectral Sparsity at Scale]
 \label{cor:sparsity}
 The 10 target operations for $n=4$ exhibit mean sparsity of 36\% (10.3/16 coefficients non-zero on average). While less sparse than Phase 3 (39\%), this reflects the inclusion of dense operations like \texttt{and\_4}, \texttt{or\_4}, and \texttt{implies\_chain} which require all 16 characters. Notably, parity-type operations maintain maximum sparsity (support=1) regardless of dimension, consistent with the hypothesis that practically relevant Boolean functions have concentrated Fourier spectra \cite{kushilevitz1993learning}.
@@ -898,6 +932,21 @@ The zero-loss quantization result enables immediate deployment:
     \item \textbf{Power:} Combinational logic at $\mu$W scale on FPGA
     \item \textbf{Latency:} Single-cycle inference (no sequential dependencies)
 \end{itemize}
+
+\subsection{Why Not SAT/ILP/Enumeration?}
+
+SAT solvers, integer linear programming (ILP), and brute-force enumeration are strong alternatives for discrete logic synthesis---and in fact, we use enumeration for $n=3$ precisely because it's tractable. Our aim is not to claim superiority over these methods, but rather to demonstrate three complementary advantages:
+
+\paragraph{Differentiable Integration.}
+SAT/ILP operate as black-box oracles: given a specification, they return a solution (or UNSAT). Our spectral approach enables \textit{gradient-based integration} within larger differentiable systems. For instance, training an end-to-end neural architecture that includes learned Boolean logic blocks requires backpropagation through the logic layer---impossible with discrete solvers but natural in our Gumbel-Softmax formulation.
+
+\paragraph{Warm-Start Capabilities.}
+The Phase 4 warm-start experiment (Section~\ref{sec:phase4}) demonstrates that exact spectral analysis (WHT) provides superior initialization for discrete refinement compared to random search. While SAT solvers excel at satisfiability, they lack the spectral structure that enables hierarchical decomposition and coefficient estimation for large $n$.
+
+\paragraph{Compilation to Ternary PTFs.}
+Our synthesis targets a specific representation class: ternary polynomial threshold functions implementable as single-cycle combinational logic. SAT/ILP can verify logic equivalence but don't inherently produce sparse spectral representations. The sparsity we achieve (31-39\% across phases) reflects spectral concentration specific to the Walsh basis---structure that SAT encodings don't directly exploit.
+
+That said, hybrid approaches combining SAT-based verification with spectral coefficient search represent a promising direction for scaling beyond $n=4$, and we view these methods as complementary rather than competing paradigms.
 
 %==============================================================================
 \section{Phase 5: Scalable Spectral Methods}

@@ -212,17 +212,26 @@ def routing_stats(P: np.ndarray) -> Dict[str, Any]:
     """Compute routing matrix diagnostics for mHC analysis.
 
     Args:
-        P: (n, n) doubly stochastic routing matrix
+        P: (n_parent, n_child) routing matrix (can be rectangular or square)
 
     Returns:
         Dictionary with:
-        - drift: Frobenius distance from identity
+        - drift: Frobenius distance from identity (square) or uniform (rectangular)
         - mean_entropy: mean column entropy
         - max_entries: maximum entry per column
         - permutation_likeness: how close to hard permutation
     """
-    n = P.shape[0]
-    drift = np.linalg.norm(P - np.eye(n), 'fro')
+    n_parent, n_child = P.shape
+
+    # Compute drift from reference matrix
+    if n_parent == n_child:
+        # Square matrix: drift from identity
+        reference = np.eye(n_parent)
+    else:
+        # Rectangular matrix: drift from uniform distribution
+        reference = np.ones((n_parent, n_child)) / n_parent
+
+    drift = np.linalg.norm(P - reference, 'fro')
 
     # Column entropy (how spread out each column is)
     col_entropies = -np.sum(P * np.log(P + 1e-10), axis=0)
