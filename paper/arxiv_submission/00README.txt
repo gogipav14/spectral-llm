@@ -10,6 +10,6 @@ Figures: All PDF figures are in the figures/ subdirectory.
 
 Bibliography: Embedded in draft.tex (no .bbl file needed).
 
-Package requirements: Standard LaTeX packages only (geometry, amsmath, graphicx, etc.)
+Package requirements: Standard LaTeX packages only (geometry, amsmath, amsthm, graphicx, booktabs, hyperref, tcolorbox, enumerate, etc.)
 
 GitHub repository: https://github.com/gogipav14/spectral-llm
