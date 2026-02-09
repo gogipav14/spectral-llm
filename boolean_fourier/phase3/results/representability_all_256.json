@@ -1,0 +1,6168 @@
+{
+  "n_variables": 3,
+  "n_functions": 256,
+  "n_representable": 256,
+  "n_masks_tested": 6561,
+  "total_configurations": 1679616,
+  "all_representable": true,
+  "failures": [],
+  "support_distribution": {
+    "0": 1,
+    "8": 9,
+    "4": 49,
+    "6": 98,
+    "2": 14,
+    "7": 11,
+    "5": 66,
+    "3": 7,
+    "1": 1
+  },
+  "mean_support": 5.12890625,
+  "results": {
+    "0": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 0
+    },
+    "1": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "support_size": 8
+    },
+    "2": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "support_size": 8
+    },
+    "3": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        1,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "4": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "support_size": 8
+    },
+    "5": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "6": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        -1
+      ],
+      "support_size": 4
+    },
+    "7": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        1,
+        0,
+        -1,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "8": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "support_size": 8
+    },
+    "9": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        1
+      ],
+      "support_size": 4
+    },
+    "10": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        -1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "11": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        -1,
+        0,
+        1,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "12": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        -1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "13": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        -1,
+        0,
+        1,
+        0,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "14": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "15": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "16": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "support_size": 8
+    },
+    "17": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "18": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "19": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "20": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "21": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "22": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "23": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "24": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "25": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "26": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "27": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "28": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "29": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "30": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "31": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "support_size": 7
+    },
+    "32": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "support_size": 8
+    },
+    "33": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "34": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "35": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        -1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "36": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        1,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "37": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "38": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "39": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "40": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "41": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        -1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "42": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "43": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "44": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "45": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "46": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "47": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1
+      ],
+      "support_size": 7
+    },
+    "48": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "49": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        -1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "50": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "51": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "52": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "53": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "54": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "55": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        1,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 5
+    },
+    "56": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "57": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        0,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "58": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "59": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        1,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "60": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "61": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "62": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "63": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 3
+    },
+    "64": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 8
+    },
+    "65": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "66": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "67": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "68": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "69": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        -1,
+        0,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "70": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "71": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "72": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "73": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        -1,
+        1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "74": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "75": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        1,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "76": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "77": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "78": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "79": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 7
+    },
+    "80": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "81": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "82": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "83": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "84": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "85": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "86": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "87": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 5
+    },
+    "88": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "89": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "90": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "91": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        1,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "92": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "93": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "94": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "95": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "support_size": 3
+    },
+    "96": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "support_size": 4
+    },
+    "97": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "98": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "99": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        -1,
+        0,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "100": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "101": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        -1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "102": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "support_size": 2
+    },
+    "103": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        0,
+        1,
+        1
+      ],
+      "support_size": 5
+    },
+    "104": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 8
+    },
+    "105": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "support_size": 2
+    },
+    "106": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "107": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 5
+    },
+    "108": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "109": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "support_size": 5
+    },
+    "110": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "111": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "support_size": 3
+    },
+    "112": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "support_size": 6
+    },
+    "113": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1
+      ],
+      "support_size": 4
+    },
+    "114": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "support_size": 4
+    },
+    "115": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        1,
+        1,
+        1
+      ],
+      "support_size": 7
+    },
+    "116": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "117": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        1
+      ],
+      "support_size": 5
+    },
+    "118": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "119": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "support_size": 5
+    },
+    "120": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "121": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "122": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "123": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "124": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "125": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "126": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "support_size": 5
+    },
+    "127": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "support_size": 5
+    },
+    "128": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 8
+    },
+    "129": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "130": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "131": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "132": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "133": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "134": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "135": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "136": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "137": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "138": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "139": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "140": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "141": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "142": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "143": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 7
+    },
+    "144": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 4
+    },
+    "145": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "146": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "147": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "148": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "149": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "150": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 2
+    },
+    "151": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "152": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "153": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 2
+    },
+    "154": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "155": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "156": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "157": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "158": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "159": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 3
+    },
+    "160": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "161": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "162": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "163": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "164": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "165": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "166": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "167": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "168": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "169": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "170": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "171": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "172": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "173": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "174": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "175": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 3
+    },
+    "176": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "177": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 4
+    },
+    "178": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "179": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 7
+    },
+    "180": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "181": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "182": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "183": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "184": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "185": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "186": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "187": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        1,
+        -1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "188": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 7
+    },
+    "189": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "190": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "191": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "192": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 4
+    },
+    "193": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "194": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "195": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "196": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "197": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "198": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "199": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "200": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "201": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        1
+      ],
+      "support_size": 6
+    },
+    "202": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "203": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "204": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "205": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "206": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "207": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 3
+    },
+    "208": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 6
+    },
+    "209": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "210": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        0,
+        -1
+      ],
+      "support_size": 6
+    },
+    "211": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "212": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 4
+    },
+    "213": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "support_size": 7
+    },
+    "214": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "215": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "216": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        -1,
+        0
+      ],
+      "support_size": 6
+    },
+    "217": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "218": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 7
+    },
+    "219": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "220": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "221": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "222": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "223": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        0,
+        -1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "224": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 6
+    },
+    "225": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "226": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "227": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "228": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 6
+    },
+    "229": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "230": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 7
+    },
+    "231": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        1,
+        0
+      ],
+      "support_size": 5
+    },
+    "232": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        1
+      ],
+      "support_size": 6
+    },
+    "233": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 7
+    },
+    "234": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "235": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "236": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "237": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        1
+      ],
+      "support_size": 5
+    },
+    "238": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "support_size": 5
+    },
+    "239": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "240": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 2
+    },
+    "241": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "242": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "243": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 3
+    },
+    "244": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "245": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "246": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        1,
+        -1
+      ],
+      "support_size": 5
+    },
+    "247": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "248": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "249": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1,
+        1
+      ],
+      "support_size": 5
+    },
+    "250": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "251": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        0,
+        -1,
+        -1,
+        0,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "252": {
+      "representable": true,
+      "truth_table": [
+        1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "support_size": 5
+    },
+    "253": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        -1,
+        -1,
+        0
+      ],
+      "support_size": 5
+    },
+    "254": {
+      "representable": true,
+      "truth_table": [
+        1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        -1,
+        -1,
+        -1,
+        0,
+        0,
+        0,
+        -1
+      ],
+      "support_size": 5
+    },
+    "255": {
+      "representable": true,
+      "truth_table": [
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+      ],
+      "best_mask": [
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "support_size": 1
+    }
+  },
+  "timestamp": "2026-02-09T05:10:43.283233"
+}

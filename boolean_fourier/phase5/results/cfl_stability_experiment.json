@@ -1,0 +1,72 @@
+{
+  "experiment": "CFL Stability",
+  "router_type": "sinkhorn",
+  "schedules": {
+    "very_slow": {
+      "label": "Very Slow (T=10000)",
+      "n_steps": 10000,
+      "temp_start": 1.0,
+      "temp_end": 0.1,
+      "annealing_rate": 0.0002302585092994046,
+      "final_accuracy": 1.0,
+      "final_sparsity": null,
+      "spectral_gap_final": 0.20093941688537598,
+      "spectral_gap_variance": 0.00612231263163031,
+      "spectral_entropy_final": 0.671090841293335,
+      "n_spectral_samples": 100
+    },
+    "slow": {
+      "label": "Slow (T=5000, baseline)",
+      "n_steps": 5000,
+      "temp_start": 1.0,
+      "temp_end": 0.1,
+      "annealing_rate": 0.0004605170185988092,
+      "final_accuracy": 1.0,
+      "final_sparsity": null,
+      "spectral_gap_final": 0.19694924354553223,
+      "spectral_gap_variance": 0.01138706305345369,
+      "spectral_entropy_final": 0.6717777252197266,
+      "n_spectral_samples": 50
+    },
+    "medium": {
+      "label": "Medium (T=2000)",
+      "n_steps": 2000,
+      "temp_start": 1.0,
+      "temp_end": 0.1,
+      "annealing_rate": 0.001151292546497023,
+      "final_accuracy": 1.0,
+      "final_sparsity": null,
+      "spectral_gap_final": 0.19349288940429688,
+      "spectral_gap_variance": 0.025733385306656233,
+      "spectral_entropy_final": 0.6722455620765686,
+      "n_spectral_samples": 20
+    },
+    "fast": {
+      "label": "Fast (T=500)",
+      "n_steps": 500,
+      "temp_start": 1.0,
+      "temp_end": 0.1,
+      "annealing_rate": 0.004605170185988092,
+      "final_accuracy": 0.8727999925613403,
+      "final_sparsity": null,
+      "spectral_gap_final": 0.2266494631767273,
+      "spectral_gap_variance": 0.07649797862263112,
+      "spectral_entropy_final": 0.666881799697876,
+      "n_spectral_samples": 5
+    },
+    "instant": {
+      "label": "Instant (tau=0.01 fixed)",
+      "n_steps": 500,
+      "temp_start": 0.01,
+      "temp_end": 0.01,
+      "annealing_rate": Infinity,
+      "final_accuracy": 1.0,
+      "final_sparsity": null,
+      "spectral_gap_final": 0.08735144138336182,
+      "spectral_gap_variance": 0.00011829925294449596,
+      "spectral_entropy_final": 1.0616321563720703,
+      "n_spectral_samples": 5
+    }
+  },
+  "timestamp": "2026-02-09T05:17:08.710914"
+}
