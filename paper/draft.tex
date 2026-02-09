@@ -1169,7 +1169,7 @@ To validate our Sinkhorn-constrained routing against alternatives from the concu
 We compare three routing mechanisms:
 \begin{itemize}
     \item \textbf{Sinkhorn}: Column-stochastic projection via iterative normalization ($K=20$), as used in Phases~2--4.
-    \item \textbf{Gumbel-STE}: Gumbel-Softmax with straight-through estimator (hard one-hot forward, soft gradient backward), following Mind the Gap~\cite{yousefi2025mind}.
+    \item \textbf{Gumbel-STE}: Gumbel-Softmax with straight-through estimator (hard one-hot forward, soft gradient backward), following Mind the Gap~\cite{yousefi2025gap}.
     \item \textbf{ReinMax}: Sinkhorn projection with annealed entropy regularization in the loss ($\lambda_{\text{ent}}: 0.1 \to 0$), inspired by CardNN exploration strategies.
 \end{itemize}
 
@@ -1177,7 +1177,7 @@ All three share the same architecture (3-feature input, 4-primitive output, sign
 
 \begin{table}[h]
 \centering
-\caption{Routing Mechanism Comparison on Mode-Switching Task ($n=2$, 4 frozen primitives). Sinkhorn achieves the best accuracy--interpretability tradeoff. Gumbel-STE exhibits the discretization gap discussed in \cite{yousefi2025mind}: hard routing commits early but cannot escape suboptimal assignments.}
+\caption{Routing Mechanism Comparison on Mode-Switching Task ($n=2$, 4 frozen primitives). Sinkhorn achieves the best accuracy--interpretability tradeoff. Gumbel-STE exhibits the discretization gap discussed in \cite{yousefi2025gap}: hard routing commits early but cannot escape suboptimal assignments.}
 \label{tab:routing_comparison}
 \small
 \begin{tabular}{lcccccc}
@@ -1196,7 +1196,7 @@ Gumbel-STE & 88.5\% & --- & \textbf{0.75} & \textbf{0.54} & 0.82 & \textbf{1.00}
 \begin{enumerate}
     \item \textbf{Sinkhorn achieves the best accuracy--interpretability tradeoff.} Both Sinkhorn and ReinMax reach 100\% accuracy by step 100, with Sinkhorn attaining the highest sign coherence (0.96)---closest to the ternary $\{-1,0,+1\}$ values required for zero-loss quantization. This confirms the Phase~2 finding that Sinkhorn constraints enable exact discretization.
 
-    \item \textbf{Gumbel-STE exhibits the discretization gap.} Hard one-hot routing commits early (sparsity 0.75, specialization 0.54) but plateaus at 88.5\% accuracy---the router locks onto a suboptimal primitive assignment and cannot recover. This empirically validates the ``discretization gap'' analyzed in Mind the Gap~\cite{yousefi2025mind}, where STE gradients provide biased updates that prevent convergence to the global optimum.
+    \item \textbf{Gumbel-STE exhibits the discretization gap.} Hard one-hot routing commits early (sparsity 0.75, specialization 0.54) but plateaus at 88.5\% accuracy---the router locks onto a suboptimal primitive assignment and cannot recover. This empirically validates the ``discretization gap'' analyzed in Mind the Gap~\cite{yousefi2025gap}, where STE gradients provide biased updates that prevent convergence to the global optimum.
 
     \item \textbf{Entropy annealing rescues ReinMax.} Without annealing ($\lambda_{\text{ent}}=0.1$ fixed), the entropy bonus dominates the loss (loss $\approx -0.36$), keeping routing completely diffuse (sparsity 0.21). Annealing $\lambda_{\text{ent}}: 0.1 \to 0$ alongside temperature allows early exploration followed by late sharpening, recovering performance comparable to Sinkhorn.
 
