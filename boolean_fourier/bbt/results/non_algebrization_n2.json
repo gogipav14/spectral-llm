@@ -1,0 +1,207 @@
+{
+  "rationality": {
+    "n": 2,
+    "num_functions": 16,
+    "max_influence_denominator": 2,
+    "max_p_denominator": 2,
+    "max_margin_exp_denominator": 3,
+    "influence_denominators": [
+      1,
+      2
+    ],
+    "margin_exp_denominators": [
+      1,
+      2,
+      3
+    ],
+    "eigenvalue_algebraic_degrees": {
+      "min": 1,
+      "max": 3,
+      "unique": [
+        1,
+        2,
+        3
+      ]
+    },
+    "conclusion": "All BBT quantities are algebraic (not transcendental). Influence denominators divide 16. Eigenvalue algebraic degrees up to 3."
+  },
+  "algebraic_structure": {
+    "n": 2,
+    "num_functions": 16,
+    "unique_margin_exponents": 4,
+    "unique_margin_degrees": [
+      1,
+      2,
+      3
+    ],
+    "max_margin_degree": 3,
+    "degree_distribution": {
+      "1": 4,
+      "2": 4,
+      "3": 8
+    },
+    "sample_exponents": [
+      {
+        "func_id": 0,
+        "exponent": "0",
+        "degree": 1
+      },
+      {
+        "func_id": 1,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 2,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 3,
+        "exponent": "-1/2",
+        "degree": 2
+      },
+      {
+        "func_id": 4,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 5,
+        "exponent": "-1/2",
+        "degree": 2
+      },
+      {
+        "func_id": 6,
+        "exponent": "-1",
+        "degree": 1
+      },
+      {
+        "func_id": 7,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 8,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 9,
+        "exponent": "-1",
+        "degree": 1
+      },
+      {
+        "func_id": 10,
+        "exponent": "-1/2",
+        "degree": 2
+      },
+      {
+        "func_id": 11,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 12,
+        "exponent": "-1/2",
+        "degree": 2
+      },
+      {
+        "func_id": 13,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 14,
+        "exponent": "-2/3",
+        "degree": 3
+      },
+      {
+        "func_id": 15,
+        "exponent": "0",
+        "degree": 1
+      }
+    ]
+  },
+  "dependence_structure": {
+    "n": 2,
+    "total_pairs_same_I_different_margin": 32,
+    "sample_pairs": [
+      {
+        "func_i": 1,
+        "func_j": 3,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 1,
+        "func_j": 5,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 1,
+        "func_j": 10,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 1,
+        "func_j": 12,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 2,
+        "func_j": 3,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 2,
+        "func_j": 5,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 2,
+        "func_j": 10,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 2,
+        "func_j": 12,
+        "total_influence": "1",
+        "margin_i": "-2/3",
+        "margin_j": "-1/2"
+      },
+      {
+        "func_i": 3,
+        "func_j": 4,
+        "total_influence": "1",
+        "margin_i": "-1/2",
+        "margin_j": "-2/3"
+      },
+      {
+        "func_i": 3,
+        "func_j": 7,
+        "total_influence": "1",
+        "margin_i": "-1/2",
+        "margin_j": "-2/3"
+      }
+    ],
+    "structural_analysis": {
+      "margin_is_polynomial_in_fhat": false,
+      "margin_is_rational_in_fhat": true,
+      "reason": "r = -\u03a3 Inf_\u2113/(1+Inf_\u2113) where Inf_\u2113 = \u03a3_{S\u220b\u2113} f\u0302(S)\u00b2. The division by (1+Inf_\u2113) makes r a rational function, not polynomial. Algebraic extensions preserve polynomial identities but not rational ones. This is the structural non-algebraicity of BBT."
+    }
+  }
+}

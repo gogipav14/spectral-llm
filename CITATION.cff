@@ -1,27 +1,46 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+title: "Spectral-LLM: Boolean-Fourier theory, ternary synthesis, and extreme low-bit LLM quantization"
+message: "If you use this code or the certified n=4 / n=5 NPN-canonical data, please cite the relevant manuscript(s) below."
+type: software
 authors:
-  - family-names: "Pavlov"
-    given-names: "Gorgi"
-    email: "gorgipavlov@gmail.com"
+  - family-names: Pavlov
+    given-names: Gorgi
+    email: gorgipavlov@gmail.com
     affiliation: "Lehigh University & Johnson and Johnson"
-    # orcid: "https://orcid.org/0000-0000-0000-0000"  # Optional - add your ORCID if available
-title: "Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition"
-version: 1.0.0
-# doi: 10.5281/zenodo.XXXXXXX  # Add after Zenodo registration
-date-released: 2026-01-19
-url: "https://github.com/gogipav14/spectral-llm"
 repository-code: "https://github.com/gogipav14/spectral-llm"
-identifiers:
-  - type: other
-    value: "arXiv:2601.13953"
-    description: "arXiv preprint"
-keywords:
-  - boolean logic
-  - spectral analysis
-  - differentiable programming
-  - JAX
-  - Walsh-Hadamard transform
-  - logic synthesis
-  - ternary networks
+url: "https://github.com/gogipav14/spectral-llm"
 license: MIT
+keywords:
+  - boolean fourier analysis
+  - walsh-hadamard transform
+  - ternary polynomial threshold functions
+  - LLM quantization
+  - low-bit quantization
+  - logic synthesis
+preferred-citation:
+  type: article
+  title: "The Banach-Butterfly Invariant: Influence-Adaptive Walsh Geometry for Ternary Polynomial Threshold Functions"
+  authors:
+    - family-names: Pavlov
+      given-names: Gorgi
+  year: 2026
+  journal: "arXiv preprint"
+references:
+  - type: article
+    title: "Influence-Weighted Spectral Rotations for Extreme Low-Bit LLM Quantization"
+    authors:
+      - family-names: Pavlov
+        given-names: Gorgi
+    year: 2026
+    journal: "arXiv preprint"
+  - type: article
+    title: "Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition"
+    authors:
+      - family-names: Pavlov
+        given-names: Gorgi
+    year: 2026
+    journal: "arXiv preprint"
+    identifiers:
+      - type: other
+        value: "arXiv:2601.13953"
+        description: "arXiv preprint (under journal review)"

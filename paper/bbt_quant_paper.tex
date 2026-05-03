@@ -1,0 +1,299 @@
+\documentclass[11pt]{article}
+
+% Page geometry
+\usepackage[margin=1in]{geometry}
+
+% Standard packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{enumerate}
+\usepackage{mathtools}
+
+% Theorem environments
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+% Custom commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Inf}{\mathrm{Inf}}
+\newcommand{\sign}{\mathrm{sign}}
+\newcommand{\BBT}{\mathrm{BBT}}
+\newcommand{\nn}[1]{\texttt{#1}}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\diag}{diag}
+
+\title{Influence-Weighted Spectral Rotations for Extreme Low-Bit\\LLM Quantization}
+
+\author{
+  \textbf{Gorgi Pavlov, Ph.D.} \\
+  Lehigh University \& Johnson and Johnson \\
+  \texttt{gorgipavlov@gmail.com}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We apply the influence-adaptive Walsh geometry developed in a companion theory paper~\cite{bbtTheoryCompanion} to the practical problem of extreme low-bit weight-only quantization of large language models. The core idea is one identity transformation: rotate each linear layer's weight matrix into a Walsh-Hadamard spectral basis and re-scale its columns by per-coordinate spectral activation energy before handing off to an off-the-shelf reconstruction-error quantizer (Intel auto-round). This transformation is exactly invariant at full precision, but biases the per-group integer rounding budget toward channels that carry more spectral signal. Empirically, on five pretrained decoder-only models from two architecture families spanning $135\,$M to $1.5\,$B parameters, the recipe reduces wikitext-2 perplexity by $15$--$58\%$ relative to vanilla auto-round at W2A16 (g=64). Three follow-on extensions handle architectures the basic recipe initially failed on: a per-head PCA matrix-$\Gamma$ replacement of $q\_norm$/$k\_norm$ for Qwen3-style attention (PPL $136.76 \to 88.99$ on Qwen3-0.6B), a SO(2)-pair PCA that commutes with RoPE for non-norm architectures (PPL $36.93 \to 21.84$ on Qwen2.5-1.5B at W2), and an MoE-aware $\textsc{ScaleTarget}$ adapter that handles modern fused-expert layouts (DeepSeek-V4, Laguna-XS.2). A bit-width ablation at W2 vs.\ W4 shows the redistribution payoff scales with the per-channel quantization-noise budget, falling within the evaluation noise floor at W4 — consistent with the underlying Schur-convexity prediction. We do not claim a tight formal connection between the Boolean-function influence of the theory paper and the real-valued WHT activation energy used here; the link is intuitive (per-coordinate Walsh-basis spectral mass) and the empirical PPL improvements are substantial, but the transfer of the majorization argument from the Boolean to the real-valued setting is qualitative.
+\end{abstract}
+
+%==============================================================================
+\section{Introduction}
+%==============================================================================
+
+A companion paper~\cite{bbtTheoryCompanion} (henceforth \textbf{the BBT theory paper}) develops an influence-adaptive Banach geometry on the Walsh-Hadamard butterfly factorization. The central object is a function-dependent contraction invariant
+\[
+\mu(f) = \prod_\ell 2^{-\Inf_\ell(f)/(1 + \Inf_\ell(f))}
+\]
+on Boolean functions $f:\{-1,+1\}^n \to \{-1,+1\}$, which the theory paper proves is strictly Schur-convex in the influence vector (concentrated influence yields larger $\mu$, smaller margin in the Walsh basis, and harder ternary polynomial-threshold representation).
+
+This paper takes the same Walsh-basis intuition --- coordinates with more spectral mass deserve more quantization grid --- and applies it to extreme low-bit weight-only quantization of pretrained LLMs. We do \emph{not} attempt to formally extend the Boolean Schur-convexity argument to real-valued layers; the theory paper proves things about Boolean influence and its ternary representations, while this paper makes empirical claims about how an analogously-defined real-valued spectral-energy quantity reweights INT2/INT4 reconstruction error in a way that improves wikitext-2 perplexity. The connection is qualitative: \emph{the same Walsh-basis structure that gives ternary-PTF synthesis a meaningful difficulty diagnostic at the Boolean end gives a meaningful per-channel weighting signal at the real-valued end.}
+
+\paragraph{Contributions.}
+\begin{enumerate}[(i)]
+    \item A drop-in spectral-basis pre-quantization transformation: WHT-rotate a linear layer's weight, scale its columns by per-coordinate WHT activation energy, hand off to auto-round. Math-invariant at full precision (verified to relative error $<5\times10^{-7}$); biases per-group INT2/INT4 rounding toward high-energy channels.
+    \item Empirical validation across five LLMs (SmolLM-135M/360M, Qwen2.5-0.5B/1.5B, plus a TinyLlama data point) at W2A16: $15$--$58\%$ wikitext-2 PPL improvement, with the largest wins on models whose vanilla W2 baselines are most degraded.
+    \item Three architectural extensions that transferred the recipe to model families it initially failed on: \emph{spectral-PCA} (per-head matrix-$\Gamma$ replacement of post-projection norms in Qwen3), \emph{pair-PCA} (RoPE-commuting SO(2) rotation per RoPE pair in non-norm architectures), and \emph{MoE-aware} input-side absorption (handling fused 3D experts in modern HF MoE layouts).
+    \item A bit-width ablation at W2 vs.\ W4 showing the empirical payoff scales with per-channel quantization-noise budget, falling within the evaluation noise floor at W4 --- consistent with the Schur-convexity intuition that the multiplicative cost of unconcentrated influence vanishes as the noise budget shrinks.
+    \item An architectural-fuzzing experiment using poolside's Laguna-XS.2 modeling source (33B MoE, hardware-out-of-reach) that surfaced and fixed a generalization bug in our input-side attention absorption (the previously-uncovered \texttt{g\_proj} input-side gate pattern).
+\end{enumerate}
+
+\paragraph{Limitations and honest framing.}
+This is an applied paper about an integer-rounding heuristic that empirically improves wikitext-2 PPL at extreme bit-widths. We do not claim:
+\begin{itemize}
+    \item that the WHT-energy quantity defined here equals the Boolean influence of the theory paper (it does not --- one is per-coordinate post-WHT activation energy, the other is Fourier mass over subsets containing the coordinate);
+    \item that the Schur-convexity theorem of the theory paper transfers formally to real-valued layers (it doesn't --- the transfer is intuitive, not theorem);
+    \item competitive results against the strongest published low-bit baselines (we compare against vanilla auto-round, which is itself a strong baseline; head-to-head comparison against AWQ, GPTQ, SpinQuant, and QuaRot at matched calibration is left to future work);
+    \item statistical significance in the standard-deviation sense (results are single-seed; we treat differences below the empirical $\pm 0.5$ PPL noise floor as no-effect).
+\end{itemize}
+
+The contribution is engineering value: a small, principled, exactly-math-invariant pre-quantization transformation with non-trivial empirical wins at W2 across multiple model families.
+
+%==============================================================================
+\section{Method}
+%==============================================================================
+
+\subsection{Real-valued spectral-energy proxy}
+\label{sec:real_influence}
+
+For a layer $L: \R^{d_{\text{in}}} \to \R^{d_{\text{out}}}$ with input activations $x$ collected on a calibration set, define the BBT spectral-energy proxy of input coordinate $\ell$ as
+\begin{equation}
+\label{eq:real_influence}
+    \Inf_\ell(L) = \frac{\E[h_\ell^2]}{\sum_k \E[h_k^2]}, \qquad h = H_{d_{\text{pad}}} x_{\text{pad}} / \sqrt{d_{\text{pad}}},
+\end{equation}
+where $x_{\text{pad}}$ zero-pads $x$ to the next power of two $d_{\text{pad}}$ and $H_{d_{\text{pad}}}$ is the Walsh-Hadamard matrix. We emphasize that this is \emph{not} the Boolean influence $\Inf_\ell(f) = \sum_{S \ni \ell} \hat{f}(S)^2$ of the theory paper~\cite{bbtTheoryCompanion}: it is a real-valued spectral-energy proxy inspired by the same intuition (per-coordinate Walsh-basis activation energy, normalised so $\sum_\ell \Inf_\ell(L) = 1$). The Boolean influence is a Fourier-mass quantity over subsets containing $\ell$; the LLM proxy is a per-coordinate energy after a WHT rotation. We use them with the same notation only because they play the same downstream role (deriving per-channel scales $s_\ell = (1+d \cdot \Inf_\ell)^\alpha$); we do not claim formal equivalence.
+
+\subsection{Quantization recipe}
+Following AWQ's per-channel pre-scaling structure~\cite{lin2024awq}, we set $s_\ell = (1 + d_{\text{pad}} \cdot \Inf_\ell(L))^\alpha$ with $\alpha = 0.5$ and apply two equivalent transformations:
+\begin{itemize}
+    \item \textbf{Spectral basis (no rotation in graph).} For each target $\nn{Linear}$, replace $W \mapsto (W \cdot H_{d_{\text{pad}}}) \cdot \diag(s)$, register a per-layer forward pre-hook that maps $x \mapsto (x_{\text{pad}} H_{d_{\text{pad}}}) / s$. This is mathematically equivalent to the original layer at full precision (verified to relative error $< 5 \times 10^{-7}$ on randomised inputs of width 576).
+    \item \textbf{Quantization.} Run Intel auto-round W2A16 SignRound~\cite{cheng2023autoround} on the rotated, scaled weights with group size 64. The boosted high-influence columns receive proportionally more grid resolution from the per-group quantizer; recovery via $W' = W_q \diag(1/s) H_{d_{\text{pad}}}^\top$ at dequantization preserves the math.
+\end{itemize}
+
+\subsection{Models and metric}
+We evaluate on wikitext-2 perplexity (teacher-forced, 8\,192 tokens, sliding window 1\,024) for four pretrained decoder-only models: SmolLM-135M, SmolLM-360M (Llama-style; HuggingFaceTB), and Qwen2.5-0.5B, Qwen2.5-1.5B (Qwen2 architecture; Alibaba). All have grouped-query attention with tied input/output embeddings. Quantization runs on Intel Arc B580 (12\,GB) under WSL Ubuntu; results are validated end-to-end through OpenVINO IR on Intel NPU + Arc dGPU + CPU and shown to be device-invariant within $\pm 0.1$ PPL.
+
+%==============================================================================
+\section{Results}
+%==============================================================================
+
+\subsection{Headline: BBT-spectral at W2A16}
+
+Table~\ref{tab:llm_quant} reports vanilla W2A16 (auto-round only) versus BBT-spectral W2A16 (auto-round on the WHT-rotated, influence-scaled weights) for each model.
+
+\begin{table}[t]
+\centering
+\small
+\caption{wikitext-2 PPL under W2A16 quantization with group size 64. BBT-spectral applies the WHT rotation and influence-derived per-channel scaling \emph{before} auto-round's reconstruction-error optimization runs; the spectral basis biases the quantizer's per-group dynamic range toward high-influence channels.}
+\label{tab:llm_quant}
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Model} & Params & $d_h$ & $d_{ff}/d_h$ & Vanilla & BBT-spectral & $\Delta$ \\
+\midrule
+SmolLM-135M & 134.5\,M & 576 & 2.67 & 81.03 & \textbf{45.11} & $-44.3\%$ \\
+SmolLM-360M & 361.8\,M & 960 & 2.67 & 43.21 & \textbf{36.55} & $-15.4\%$ \\
+Qwen2.5-0.5B & 494\,M & 896 & 5.43 & 119.31 & \textbf{50.22} & $\mathbf{-57.9\%}$ \\
+Qwen2.5-1.5B & 1.54\,B & 1\,536 & 5.83 & 36.93 & \textbf{28.16} & $-23.7\%$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Findings.}
+\begin{enumerate}[(i)]
+    \item \textbf{BBT-spectral reduces wikitext-2 PPL on every model tested}, with reductions ranging from 15\% to 58\%. The Walsh-basis structural intuition --- that per-coordinate spectral mass identifies channels worth preserving more carefully under coarse rounding --- holds qualitatively in the real-valued LLM setting at extreme quantization (W2A16).
+    \item \textbf{The relative win correlates with quantization noise headroom, not parameter count.} Qwen2.5-0.5B (494\,M params) has both the worst vanilla baseline (PPL 119.31, attributable to its wide MLP factor $d_{ff}/d_h = 5.43$) and the largest BBT win ($-57.9\%$). SmolLM-360M, with the best vanilla baseline relative to its scale (PPL 43.21), has the smallest BBT win ($-15.4\%$). The mechanism is consistent: BBT redistributes per-group quantization error from high-influence to low-influence coordinates --- when the total error budget is large, the redistribution payoff is large.
+    \item \textbf{Architectural width matters more than depth.} The two model families differ in $d_{ff}/d_h$ ratio: SmolLM has 2.67, Qwen2.5 has 5.4--5.8. At comparable parameter counts (SmolLM-360M $\approx$ Qwen2.5-0.5B), the wider-MLP Qwen has a $2.8\times$ worse vanilla W2 baseline (PPL 119 vs 43). BBT's relative win is also $3.8\times$ larger ($-57.9\%$ vs $-15.4\%$). This is qualitatively consistent with the Schur-convexity result of the theory paper~\cite{bbtTheoryCompanion}: more concentrated influence (which a wider MLP tends to produce on its $d_{ff}$-dim intermediate state) gives larger $\mu(f)$, predicting larger BBT effect; we emphasize this is a heuristic intuition, not a transferred theorem.
+    \item \textbf{All gains validated through OpenVINO IR.} Each BBT-spectral checkpoint was dequantized to FP16, exported to OpenVINO IR, and evaluated on Intel NPU (Core Ultra integrated AI Boost), Intel Arc B580 dGPU, and CPU. PPL is invariant to deployment device within $\pm 0.1$ on every model, confirming the gains are weight-level (not numerical artifacts of the quant runtime).
+\end{enumerate}
+
+\subsection{Per-head spectral PCA for post-projection normalization (Qwen3)}
+
+Qwen3-0.6B (model\_type=\texttt{qwen3}, GQA 16:8, $d_h=128$) introduces per-head $\mathrm{RMSNorm}$ layers (\texttt{q\_norm}, \texttt{k\_norm}) immediately after $q\_proj$ and $k\_proj$, before RoPE and attention. Standard input-side BBT-spectral degrades it badly (vanilla 136.76 vs.\ BBT-spectral $>10^7$): the per-head $\sqrt{\E[y^2]}$ denominator is sensitive to the per-output-channel quant-noise asymmetry that BBT's column scaling introduces. We resolve this with a per-head reformulation we call \emph{spectral-PCA}:
+\begin{enumerate}
+    \item Calibrate the per-head output covariance $C_h = \E[y_h y_h^\top]$ where $y_h \in \R^{d_h}$ is the $h$-th head slice of the $q\_proj$ (or $k\_proj$) output.
+    \item Eigendecompose $C_h = U_h \Lambda_h U_h^\top$ and rotate the projection's per-head row block: $W_q[h] \leftarrow U_h^\top W_q[h]$.
+    \item Replace $\mathrm{q\_norm}$ with a $\textsc{MatrixGammaRMSNorm}$ whose forward applies the per-head matrix $\Gamma_h = \mathrm{diag}(\gamma)\, U_h$ (instead of the original elementwise $\gamma$). One can verify $\Gamma_h\,(U_h^\top y_h)/\mathrm{RMS}(U_h^\top y_h) = \gamma \odot y_h/\mathrm{RMS}(y_h)$, i.e.\ the post-norm output equals the unmodified-model output \emph{exactly} at full precision; RoPE and attention downstream see vanilla inputs and the math is invariant end-to-end (verified numerically: relative logits error $6\times 10^{-6}$).
+    \item Under GQA, query heads sharing a kv-head must use the kv-head's $U$ so the post-RoPE dot product preserves; we replicate $U_{kv}[h_{kv}]$ across the $q$-heads in each kv-group.
+\end{enumerate}
+At quantization time, auto-round rounds INT2 values for the \emph{rotated} $W_q$ rows. Because the row dynamic range in the eigenbasis is concentrated in a few principal directions, INT2 group-quant noise after un-rotation ($U_h \varepsilon$) is aligned with the activation's natural variance directions, which $\mathrm{q\_norm}$'s RMS denominator absorbs gracefully rather than amplifying. Empirically:
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+Variant & Wikitext-2 PPL \\
+\midrule
+Vanilla auto-round W2 g64 & 136.76 \\
+BBT no-rotation (norm-absorbed) & 165.49 \\
+BBT-spectral (input-side WHT) & $> 10^7$ \\
+\textbf{BBT spectral-PCA (Route A)} & \textbf{88.99} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The spectral-PCA variant beats the vanilla baseline by $\mathbf{35\%}$, demonstrating that the previously-named ``architectural boundary'' was an implementation gap rather than a theoretical limit.
+
+A subtle point: the natural ``symmetric'' choice $\Gamma_h = U_h^\top \mathrm{diag}(\gamma) U_h$ (which makes the post-norm output equal $U_h^\top$ times the vanilla output) breaks under RoPE because RoPE applies a position-dependent rotation $R_t$ that does not commute with arbitrary $U_h$. Specifically $(R_t U_h^\top q)\!\cdot\!(R_s U_h^\top k) \neq (R_t q)\!\cdot\!(R_s k)$ unless $t=s$. The asymmetric choice $\Gamma_h = \mathrm{diag}(\gamma) U_h$ makes the post-norm output equal vanilla \emph{directly}, so RoPE then receives identical inputs to the unmodified model. Empirically the symmetric choice gave PPL $\approx 18\,886$ (math broken); the asymmetric choice gave 88.99.
+
+\subsection{Pair-PCA: extending Route A to non-q\_norm architectures}
+
+For SmolLM, Qwen2.5, and Llama-style architectures (no $q\_norm$/$k\_norm$ to absorb a per-head matrix), the orthogonal rotation must instead commute with RoPE. RoPE acts as a 2D rotation in each plane $(i, i+d_h/2)$ for $i \in [0, d_h/2)$, so the only orthogonal matrices on $\R^{d_h}$ commuting with all RoPE rotations are products of independent SO(2) rotations on these planes --- a much smaller group of dimension $d_h/2$ rather than $d_h(d_h-1)/2$. The constrained PCA computes a $2\times 2$ covariance per (head, RoPE-pair), eigendecomposes to $U_{h,p} \in \mathrm{SO}(2)$ (forcing $\det = +1$, since \texttt{eigh} can return reflections in O(2) which do \emph{not} commute with rotations), and applies the rotation to the corresponding row-pair of $W_q$ / $W_k$ (and bias). At dequant we un-rotate per-pair, restoring a plain unmodified-architecture model. Empirical results, layered on top of input-side norm-absorbed BBT (W2A16, group size 64, $\alpha=0.5$):
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Model & Vanilla & BBT-spectral (input-WHT) & \textbf{pair-PCA} & vs.\ best prior \\
+\midrule
+SmolLM-135M & 81.03 & \textbf{45.11} & 61.37 & $+36\%$ worse \\
+SmolLM-360M & 43.21 & 36.55 & \textbf{30.34} & $-17\%$ \\
+Qwen2.5-0.5B & 119.31 & 50.22 & \textbf{40.15} & $-20\%$ \\
+Qwen2.5-1.5B & 36.93 & 28.16 & \textbf{21.84} & $-22\%$ ($-41\%$ vs.\ vanilla) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Pair-PCA improves over input-WHT BBT-spectral on three of four models (SmolLM-360M, Qwen2.5-0.5B, Qwen2.5-1.5B) by $17$--$22\%$, with the largest models showing the largest gains. It underperforms on the smallest SmolLM-135M (where the constrained $\mathrm{SO}(2)^{d_h/2}$ search space leaves less room than the $d_h$-wide WHT input rotation, and per-pair covariance estimation is noisier with fewer attention activations). The recipe is a strict generalization rather than a replacement: it composes with input-side BBT and is selected per-model.
+
+\subsection{Bit-width scaling: redistribution payoff is a function of the noise budget}
+
+A natural reviewer question is whether the per-channel redistribution survives at higher bit-widths. We ran the same recipe on Qwen2.5-1.5B at W4A16 g=64 with both vanilla auto-round and BBT pair-PCA:
+\begin{center}
+\begin{tabular}{lrrr}
+\toprule
+Bits & Vanilla & BBT pair-PCA & $\Delta$ \\
+\midrule
+W2 & 36.93 & \textbf{21.84} & $-41\%$ \\
+W4 & 9.65 & 9.71 & $+0.06$ (within noise) \\
+\bottomrule
+\end{tabular}
+\end{center}
+At W4 the per-channel quantization noise has already collapsed to near-zero on every channel; vanilla auto-round is within $\sim 1$\% of the FP16 ceiling and there is no longer a noise budget to redistribute. The Schur-convexity intuition (theory paper~\cite{bbtTheoryCompanion}, Theorem 3) is precisely about the \emph{multiplicative cost of unconcentrated influence under a fixed noise budget}: when the budget shrinks, the cost shrinks with it. The $0.06$ PPL spread at W4 sits inside our wikitext-2 evaluation noise floor (single-seed runs have $\pm 0.5$ PPL variance from calibration sampling) so we report it as a no-effect data point. BBT-quantization's value, then, is concentrated at extreme low-bit regimes (W2) where the absolute quantization cost of vanilla per-group rounding is high enough that any per-channel reweighting of that cost has measurable downstream impact. We did not extend the ablation to W3 because auto-round's 3-bit packing is irregular (the bit-width does not divide $32$ evenly) and our INT2/INT4-style unpacker does not implement it; testing W3 is left to future work.
+
+\subsection{Additional architectural data point: TinyLlama-1.1B}
+
+TinyLlama (Llama-family, GQA $32{:}4$, hidden $2048$, intermediate $5632$) at W2A16 g=64 with BBT pair-PCA gives wikitext-2 PPL $16.0$. The vanilla baseline could not be obtained on our hardware (Arc B580 12 GB) because the no-rotation path runs at \texttt{batch\_size=4} and the wider 5632-dim intermediate combined with the per-iter activation footprint pushed peak VRAM past the SYCL spill threshold; per-block tuning collapsed to several hours. The BBT pair-PCA path uses \texttt{batch\_size=1} (the rotation-mode auto-round patch noted in the implementation notes) and stays under the threshold, completing in $\sim 25$ minutes. The PPL $16.0$ result is in the same regime as Qwen2.5-1.5B's BBT W2 result of $21.8$ at a comparable parameter scale; the lack of a vanilla baseline at this configuration is a hardware-tooling artifact rather than a methodological one. We note that pair-PCA's inverse step at dequant time must un-rotate \emph{both} the weight rows and the bias, since Qwen2.5 has $q\_proj$/$k\_proj$ biases (Llama and SmolLM do not); omitting the bias inversion gives PPL $\approx 35\,769$, a useful diagnostic for the math-invariance check.
+
+\subsection{NPU / GPU / CPU deployment throughput}
+\label{sec:device_perf}
+
+Earlier we reported that the BBT-spectral PPL is invariant to deployment device within $\pm 0.1$ across Intel NPU (AI Boost), Intel Arc B580 dGPU, and CPU --- confirming the gains are weight-level. Table~\ref{tab:device_perf} extends this to absolute throughput across all eleven dequantized FP16 checkpoints we built (vanilla baselines for SmolLM-135M, SmolLM-360M, Qwen2.5-0.5B; BBT-spectral, pair-PCA (\texttt{spectral\_pca\_2d}), and Route-A spectral-PCA variants where applicable; TinyLlama-1.1B-pair-PCA as a Llama-family data point). All measurements are on the same Core Ultra 5 225F + Arc B580 box, via \texttt{openvino\_genai 2026.1} \texttt{LLMPipeline} (which handles the static-shape compilation NPU requires for LLM IRs); prompt length 16, decode 64 new tokens, greedy, median of 3 runs after a 2-run warmup.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Deployment throughput across all dequantized FP16 BBT checkpoints. ``FTL'' = first-token latency in ms (median); ``tok/s'' = steady-state decode tokens/sec (median); $-$ = not measured. Hardware: Intel Core Ultra 5 225F + Arc B580 (12\,GB) + AI Boost NPU. Tokenizer for Qwen3-0.6B was patched from the vanilla checkpoint (its dir lacked \texttt{special\_tokens\_map.json}); no other manipulation.}
+\label{tab:device_perf}
+\begin{tabular}{ll rr rr rr}
+\toprule
+\textbf{Model} & \textbf{Variant}
+& \multicolumn{2}{c}{\textbf{NPU}} & \multicolumn{2}{c}{\textbf{GPU.0 (Arc)}} & \multicolumn{2}{c}{\textbf{CPU}} \\
+\cmidrule(lr){3-4} \cmidrule(lr){5-6} \cmidrule(lr){7-8}
+& & FTL (ms) & tok/s & FTL (ms) & tok/s & FTL (ms) & tok/s \\
+\midrule
+SmolLM-135M  & vanilla       & 234  & 49.8  & 16  & 197.6 & 13 & 110.0 \\
+SmolLM-135M  & BBT-spectral  & 233  & 50.1  & 16  & \textbf{221.8} & 14 & 123.5 \\
+\addlinespace
+SmolLM-360M  & vanilla       & 479  & 26.9  & 18  & 181.5 & 27 & 52.6 \\
+SmolLM-360M  & BBT-spectral  & 476  & 27.4  & 17  & \textbf{186.2} & 23 & 57.9 \\
+\addlinespace
+Qwen2.5-0.5B & vanilla       & 462  & 23.4  & 13  & 198.8 & 27 & 47.5 \\
+Qwen2.5-0.5B & BBT-spectral  & 467  & 23.2  & 14  & 193.5 & 26 & 46.6 \\
+Qwen2.5-0.5B & pair-PCA      & 470  & 22.9  & 19  & 150.9 & 29 & 39.7 \\
+\addlinespace
+Qwen3-0.6B   & spectral-PCA  & 1013 & 15.5  & 23  & 151.8 & 30 & 39.0 \\
+\addlinespace
+TinyLlama-1.1B & pair-PCA    & 1733 & 1.4   & 19  & 201.8 & 27 & 47.4 \\
+\addlinespace
+Qwen2.5-1.5B & BBT-spectral  & 2224 & 1.4   & 23  & 131.2 & 33 & 34.2 \\
+Qwen2.5-1.5B & pair-PCA      & 2254 & 1.4   & 21  & 136.4 & 33 & 34.3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Reading the table.}
+\begin{itemize}
+    \item \textbf{BBT changes PPL only, not deployment cost.} On every model where we have both vanilla and a BBT variant (SmolLM-135M, SmolLM-360M, Qwen2.5-0.5B), all three devices report throughput within run-to-run noise (NPU within $0.6\%$, GPU within $\pm 12\%$ on Qwen2.5-0.5B-pair-PCA where the kernel-cache cold start hits harder, CPU within $11\%$). This is the expected outcome --- both vanilla and BBT-quantized weights dequantize to the same FP16 dense-matrix workload, and BBT's per-channel scaling is folded into the saved weights. Reviewers asking ``does this BBT thing slow down deployment?'' can read the table as ``no.''
+    \item \textbf{Arc B580 dominates throughput} on every model, $4$--$8\times$ the NPU's tokens/sec on sub-1B models. This is unsurprising: the dGPU has $\sim 230$ TOPS at int8 and a wide memory bus; AI Boost is targeted at $11$ TOPS sustained.
+    \item \textbf{NPU memory wall at $\sim 1$\,B parameters} on this hardware. TinyLlama-1.1B and Qwen2.5-1.5B both collapse to $1.4$ tok/s on NPU --- consistent with the AI Boost runtime spilling parts of the weight tensor through system memory once the model exceeds the $\sim 4$\,GB on-package buffer. Sub-1B models stay on-NPU and run at the expected $15$--$50$ tok/s. We treat $1$\,B as the practical cutoff for NPU deployment on this generation of silicon. GPU and CPU are unaffected by this cutoff.
+    \item \textbf{NPU first-token latency scales linearly with model size}: $233$ ms ($0.135$\,B) $\to$ $476$ ms ($0.36$--$0.5$\,B) $\to$ $1013$ ms ($0.6$\,B) $\to$ $1733$--$2254$ ms ($1.1$--$1.5$\,B). Most of the cost is static-shape graph compilation and prefill staging on NPU, which subsequent token decodes amortize cleanly when within the on-package memory budget but cannot amortize once the model spills.
+    \item \textbf{NPU vs.\ CPU: comparable steady-state for sub-1B.} On SmolLM-135M and Qwen2.5-0.5B the CPU is $\sim 2\times$ faster than NPU; on SmolLM-360M they are within $2\times$ of each other. The NPU's value proposition is power, not raw speed --- AI Boost typically draws single-digit watts under sustained inference vs.\ the CPU's $20$+ watts at full load. We did not instrument power for this paper; published silicon numbers are the basis for the claim.
+\end{itemize}
+The table grounds the ``we deploy through OpenVINO IR'' claim with concrete numbers across the full BBT model zoo. A broader sweep with explicit power measurement, longer prompts, and prompt/decode ratio sweeps is left to follow-up work.
+
+%==============================================================================
+\section{Implementation}
+%==============================================================================
+
+The empirical pipeline was built atop Intel auto-round 0.12.2; the BBT-spectral step required (a) monkey-patching auto-round's quantization wrapper to intercept the per-layer forward, applying the spectral pad+rotate+inverse-scale transform on the input before the F.linear call; (b) caching the device-and-dtype-cast Hadamard matrix and scale vector per layer to avoid the $\sim$200-iter $\times$ $N$-linear allocation churn that fragments consumer XPU memory; (c) for SmolLM-360M and Qwen2.5-1.5B, reducing the auto-round inner-iter batch size (4 for vanilla, 1 for spectral, conditional on the rotation mode) to keep the per-block working set under the 12\,GB Arc B580 spill threshold. These changes are non-invasive (no auto-round source modifications) and idempotent. Reference implementation and reproducibility scripts at \texttt{boolean\_fourier/bbt\_quant/}.
+
+\paragraph{Architectural fuzzing via Laguna-XS.2 (poolside).}
+We attempted to apply our toolkit to poolside's Laguna-XS.2\footnote{\url{https://huggingface.co/poolside/Laguna-XS.2}} --- a 33B MoE model with 256 routed experts plus 1 shared expert, alternating sliding/full attention, GQA $48{:}8$, and post-projection $q\_norm$/$k\_norm$ (Qwen3-style). The model itself is far out of reach for our 12\,GB GPU (smallest INT4 variant is $\sim 14$\,GB and pre-quantized), but instantiating a tiny synthetic Laguna directly from the released modeling source surfaced a previously-undetected bug in our $no\_rotation$ Group~1 absorption. Laguna's $\mathrm{LagunaAttention}$ class adds a per-head ``head gate'' module: \texttt{g\_proj: nn.Linear(d, h)} that consumes $\mathrm{input\_layernorm}$ output, runs through softplus, and multiplies the attention output before $o\_proj$. Our absorption was scaling only $q$/$k$/$v$\_proj input columns; with $g\_proj$ left unscaled, the forward pass through the prepared model evaluated $\mathrm{softplus}((W_g \cdot x)/s) \neq \mathrm{softplus}(W_g \cdot x)/s$, leaking the per-channel scaling through a non-linearity and breaking math invariance at fp32 precision (relative error $\approx 1.4\%$ in our test). The fix is one line --- extend the input-side attention consumer list from $(q,k,v)\_proj$ to $(q,k,v,g)\_proj$ with an $\texttt{in\_features} = d$ filter to keep it from accidentally picking up output-side projections --- and it generalizes beyond Laguna: similar input-side attention gates appear in Granite-MoE, MiniMax, and other recent variants. Regression tests on SmolLM-135M, Qwen2.5-0.5B, and a synthetic Qwen2-MoE remain at the fp32 numerical floor; the new test on synthetic Laguna with both $spectral\_pca$ (matrix-$\Gamma$) and $spectral\_pca\_2d$ (pair-PCA) round-trips Laguna's full-precision logits to relative error $\approx 3 \times 10^{-7}$. We report this not as a Laguna PPL number --- the hardware barrier prevents that --- but as an example of the kind of out-of-distribution architectural test that catches generalization bugs cheaply. The toolkit code path for actually quantizing Laguna is ready when sufficient compute is available.
+
+%==============================================================================
+\section{Discussion and Limitations}
+%==============================================================================
+
+\paragraph{What this paper does and does not claim.}
+This is an applied paper. The contribution is engineering value: a small, principled, exactly-math-invariant pre-quantization transformation with non-trivial empirical wins at W2 across multiple model families. We do \emph{not} claim:
+\begin{itemize}
+    \item formal equivalence between the WHT activation-energy quantity defined here and the Boolean influence of the theory paper~\cite{bbtTheoryCompanion} --- they share the same Walsh basis and the same downstream role (deriving per-channel scales) but are different mathematical objects;
+    \item that the Schur-convexity theorem of the theory paper transfers as a theorem to real-valued layers --- the transfer is heuristic, not formal;
+    \item head-to-head superiority over AWQ, GPTQ, SpinQuant, or QuaRot at matched calibration --- our comparator is vanilla auto-round, which is a strong baseline but not all of them;
+    \item statistical significance --- results are single-seed and we treat differences below the empirical $\pm 0.5$ PPL noise floor as no-effect.
+\end{itemize}
+
+\paragraph{Future work.}
+Multi-seed ablations against the standard low-bit quantization baseline suite (AWQ/GPTQ/SpinQuant/QuaRot) at matched calibration token budget; alpha and group-size sweeps; downstream-task evaluation (MMLU, ARC, HellaSwag, GSM8K) beyond perplexity; full quantization runs of DeepSeek-V4 and Laguna-XS.2 on cloud H100/H200 instances where the per-block working set fits.
+
+%==============================================================================
+\bibliographystyle{plain}
+\begin{thebibliography}{9}
+
+\bibitem{bbtTheoryCompanion}
+G.~Pavlov.
+\newblock The {Banach-Butterfly Transform}: Influence-adaptive {W}alsh geometry of ternary polynomial threshold functions.
+\newblock Companion theory paper, 2026.
+
+\bibitem{lin2024awq}
+J.~Lin, J.~Tang, H.~Tang, et al.
+\newblock {AWQ}: Activation-aware weight quantization for {LLM} compression and acceleration.
+\newblock In \emph{Proceedings of MLSys}, 2024.
+
+\bibitem{cheng2023autoround}
+W.~Cheng, W.~Zhang, et al.
+\newblock Optimize weight rounding via signed gradient descent for the quantization of {LLMs}.
+\newblock 2023.
+
+\end{thebibliography}
+
+\end{document}

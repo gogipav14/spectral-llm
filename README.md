@@ -1,168 +1,187 @@
-# Spectral-LLM: Boolean Fourier Logic with Differentiable Routing
+# Spectral-LLM: Boolean-Fourier theory, ternary synthesis, and extreme low-bit LLM quantization
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![arXiv](https://img.shields.io/badge/arXiv-2601.13953-b31b1b.svg)](https://arxiv.org/abs/2601.13953)
-<!-- Add DOI badge after Zenodo registration:
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
--->
+Three connected research artifacts at the intersection of Boolean Fourier
+analysis, mechanistic interpretability, and edge-deployable LLM quantization.
 
-Research code for the paper **"Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition"** by Gorgi Pavlov.
+```
+Spectral-LLM/
+├── paper/                         # arXiv-ready manuscripts
+│   ├── bbt_paper.tex              # The Banach-Butterfly Invariant (theory paper)
+│   ├── bbt_quant_paper.tex        # Influence-Weighted Spectral Rotations (LLM application)
+│   └── draft_nai.tex              # Differentiable Logic Synthesis (under review)
+├── boolean_fourier/               # All Python source
+│   ├── bbt_quant/                 # ★ The LLM-quantization toolkit
+│   ├── phase1..phase5/            # Boolean-PTF synthesis at n=2..5
+│   └── inference/                 # NPU inference code
+├── experiments/                   # Reproducible experiment scripts + outputs
+│   ├── n4_min_support_mu.py       # MILP minimum-support sweep at n=4
+│   ├── n5_min_support_mu.py       # n=5 uniform-sample sweep
+│   ├── npn_enumerate.py           # 616,126 NPN-canonical reps at n=5
+│   ├── n5_npn_min_support.py      # MILP on NPN-uniform sample
+│   └── *.csv, *.npy               # Saved results (see experiments/README.md)
+└── README.md                      # this file
+```
 
-**Paper**: [arXiv:2601.13953](https://arxiv.org/abs/2601.13953) | [PDF](https://arxiv.org/pdf/2601.13953)
+## The trilogy
 
-## Overview
+### 1. The Banach-Butterfly Invariant — theory paper [`paper/bbt_paper.tex`]
 
-Learning precise Boolean logic via gradient descent remains challenging: neural networks converge to fuzzy approximations that degrade under quantization. We introduce **Hybrid Spectral Composition**, a pipeline combining differentiable optimization with discrete synthesis in the Walsh-Hadamard basis.
+An **influence-adaptive Banach geometry** on the Walsh-Hadamard butterfly
+factorization (a function-dependent profile, not a new linear transform). For
+a Boolean function $f:\{-1,+1\}^n \to \{-1,+1\}$ with coordinate influences
+$\mathrm{Inf}_\ell(f)$, assign $p_\ell = 1 + \mathrm{Inf}_\ell(f)$ to butterfly
+layer $\ell$, yielding the contraction invariant
+$\mu(f) = \prod_\ell 2^{-\mathrm{Inf}_\ell/(1+\mathrm{Inf}_\ell)}$.
 
-### Key Contributions
+**What's in it:**
+- Exact butterfly $\ell_p$ operator norms via Riesz-Thorin + duality
+- Strict Schur-convexity of $\mu$ (modulo permutation) on the influence vector
+- Algebraic / non-polynomial position of $\mu$ in the Fourier-data ring
+- **MILP minimum-support certificates for all 65,536 Boolean functions at n=4**:
+  mean 6.42, max 9, all-odd by a parity argument
+- **NPN-canonical enumeration of all 616,126 representatives at n=5** (matching
+  OEIS A000370) and minimum-support MILP on a 10,000-sample
+- Empirical $\mu$-vs-support correlation: strong conditional Spearman
+  $\rho = +0.571$ at $n=4$ in the largest fixed-influence stratum, **reverses to
+  $\rho \approx -0.38$ at $n=5$** under both function-uniform and NPN-canonical
+  sampling. $\mu$ is a valid Schur-convex concentration invariant but not a
+  universal monotone predictor of minimum support across $n$.
 
-1. **Differentiable Boolean Logic** (n=2): Gradient descent achieves 100% accuracy on all 16 binary operations
-2. **Hybrid Synthesis** (n=3): Gradient descent reaches 76%; exhaustive enumeration finds optimal ternary masks achieving 100% accuracy (39% sparsity)
-3. **Spectral Synthesis** (n=4): Exact Walsh-Hadamard Transform with ternary quantization achieves 100% (36% sparsity)
-4. **Manifold-Constrained Routing**: Column-sign modulation enables Boolean negation on doubly stochastic matrices
+### 2. Influence-Weighted Spectral Rotations for Extreme Low-Bit LLM Quantization — application paper [`paper/bbt_quant_paper.tex`]
 
-### Performance
+A math-invariant pre-quantization transformation: WHT-rotate each linear
+layer's weight matrix and per-channel-scale by spectral activation energy
+before handing off to Intel `auto-round`.
 
-- GPU (JAX): **10,959 MOps/s** peak throughput
-- Ternary masks: **No floating-point arithmetic** required at inference
-- Hierarchical composition: 64-bit adders, 128-bit comparators verified on millions of samples
+**Headline empirical results (W2A16, group size 64):**
 
-## Installation
+| Model | Vanilla PPL | BBT-spectral PPL | Δ |
+|---|---:|---:|---:|
+| SmolLM-135M | 81.03 | **45.11** | −44.3% |
+| SmolLM-360M | 43.21 | **36.55** | −15.4% |
+| Qwen2.5-0.5B | 119.31 | **50.22** | **−57.9%** |
+| Qwen2.5-1.5B | 36.93 | **28.16** | −23.7% |
 
-### Requirements
+**Three architectural extensions** for model families the basic recipe
+initially failed on:
 
-- Python 3.9+
-- JAX 0.4.1+
-- Flax 0.6.0+
-- NumPy, SciPy
-- BlackJAX (for Phase 4 MCMC)
+- **Spectral-PCA (Route A)**: per-head PCA matrix-Γ replacement of `q_norm` /
+  `k_norm` for Qwen3-style attention. Qwen3-0.6B drops vanilla 136.76 → **88.99**
+  (−35%). The asymmetric construction $\Gamma_h = \mathrm{diag}(\gamma) U_h$ is
+  required for math invariance through position-dependent RoPE.
+- **Pair-PCA (Route A-2D)**: per-pair SO(2) rotations that commute with RoPE,
+  for non-`q_norm` architectures. Qwen2.5-1.5B drops 36.93 → **21.84** (−41%).
+- **MoE-aware ScaleTarget adapter**: handles fused 3D experts (Qwen2-MoE,
+  DeepSeek-V4, poolside Laguna). The Laguna-fuzzing experiment surfaced a
+  previously-undetected `g_proj` input-side attention-gate bug.
 
-### Quick Start
+**Bit-width ablation** on Qwen2.5-1.5B (W2 vs W4): redistribution payoff scales
+with the per-channel quantization-noise budget (−41% at W2, +0.06 at W4 within
+noise) — consistent with the theory paper's Schur-convexity intuition.
+
+**Cross-device deployment** through OpenVINO IR on the same machine
+(Core Ultra 5 225F + Arc B580 + AI Boost NPU): PPL invariant to ±0.1 across
+NPU + dGPU + CPU; full throughput / first-token-latency table for 11
+model/variant combinations in the paper.
+
+### 3. Differentiable Logic Synthesis — under-review companion [`paper/draft_nai.tex`]
+
+Preprint: [arXiv:2601.13953](https://arxiv.org/abs/2601.13953). The original
+synthesis architecture: differentiable spectral coefficient selection with
+Sinkhorn-constrained composition, establishing certified ternary representability
+for all Boolean functions through $n=4$. The present trilogy uses that certified
+universe as a finite testbed for the Boolean-theory diagnostics in Paper 1.
+
+## Quickstart: BBT-spectral on a small LLM
+
+The toolkit at [`boolean_fourier/bbt_quant/`](boolean_fourier/bbt_quant/) drives
+a calibration → WHT rotation → influence scaling → auto-round → dequant →
+OpenVINO IR pipeline.
 
 ```bash
-# Clone repository
-git clone https://github.com/gogipav14/spectral-llm.git
-cd spectral-llm
+# WSL/Linux side: quantize
+python -m boolean_fourier.bbt_quant.run_pipeline \
+    --model HuggingFaceTB/SmolLM-135M \
+    --output ./out/smollm135 \
+    --bits 2 --alpha 0.5 --group-size 64 \
+    --calib-samples 128 --seqlen 2048 \
+    --bbt-mode spectral_pca_2d --skip-ov
 
-# Install dependencies
-pip install -r requirements.txt
+# Dequantize for portability
+python -m boolean_fourier.bbt_quant.dequantize_autoround \
+    --src ./out/smollm135/autoround \
+    --dst ./out/smollm135/fp16
 
-# Run Phase 1 example (XOR learning)
-python boolean_fourier/phase1/train_phase1_fixed.py
+# Evaluate (XPU / CUDA / CPU all supported)
+python -m boolean_fourier.bbt_quant.eval_windows \
+    --model-dir ./out/smollm135/fp16 --backend hf_xpu \
+    --device xpu --out ./out/smollm135/eval.json
 ```
 
-## Repository Structure
+Five BBT modes are wired through `--bbt-mode`:
+- `no_rotation` — input-side BBT scaling, norm-absorbed (every architecture)
+- `spectral` — input-side WHT rotation + scaling
+- `spectral_pca` — Route A: per-head PCA + matrix-Γ q_norm/k_norm replacement
+  (Qwen3, DeepSeek-V4, Laguna)
+- `spectral_pca_2d` — pair-PCA for RoPE architectures without q_norm/k_norm
+  (SmolLM, Qwen2.5, Llama)
+- `v1_pad_pre_hook` — legacy, broken (kept for diff-archaeology)
 
-```
-spectral-llm/
-├── boolean_fourier/          # Core research code
-│   ├── phase1/               # n=2 binary logic (4-dim basis)
-│   ├── phase2/               # Temporal routing (16 operations)
-│   ├── phase3/               # n=3 three-variable logic (8-dim basis)
-│   ├── phase4/               # n=4 four-variable logic (16-dim basis)
-│   ├── phase5/               # Scaling analysis
-│   ├── inference/            # NPU deployment
-│   └── utils/                # Shared diagnostic utilities
-├── paper/                    # LaTeX paper and figures
-├── docs/                     # Documentation
-│   ├── SETUP.md             # Installation guide
-│   ├── EXPERIMENTS.md       # How to reproduce experiments
-│   └── ARCHITECTURE.md      # System design overview
-└── scripts/                  # Helper scripts
-    └── run_all_phases.sh    # Run all 8 experiments (v1 + v2)
-```
+Sanity tests live alongside the toolkit
+([`test_pca_invariance.py`](boolean_fourier/bbt_quant/test_pca_invariance.py),
+[`test_moe_invariance.py`](boolean_fourier/bbt_quant/test_moe_invariance.py),
+[`test_laguna_invariance.py`](boolean_fourier/bbt_quant/test_laguna_invariance.py))
+verifying math invariance to fp32 numerical floor (rel err $\sim 10^{-7}$) on
+synthetic fixtures pulled directly from each architecture's modeling source.
 
-## Reproducing Experiments
+## Reproducibility
 
-See [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) for detailed instructions on reproducing all results.
+- **n=4 MILP** (all 65,536 functions): 9.9 minutes single-machine, 7 workers,
+  `scipy.optimize.milp` (HiGHS). Output: `experiments/n4_min_support_mu.csv`.
+- **n=5 NPN enumeration** (616,126 reps): 65 seconds with numba JIT.
+  Output: `experiments/npn5_canonical.npy`.
+- **n=5 NPN-uniform 10k sample MILP**: 11 minutes single-machine.
+  Output: `experiments/n5_npn_min_support.csv`.
+- **LLM quant runs**: ~10–60 minutes per model on Intel Arc B580 (12 GB) with
+  the documented `batch_size` and per-block CPU eviction patches; see
+  `boolean_fourier/bbt_quant/autoround_bbt.py:patch_autoround_for_xpu_memory`.
 
-### Quick Overview
+## Hardware tested
 
-**Phase 1 (n=2):**
-```bash
-# v1: Gradient descent training
-python boolean_fourier/phase1/train_phase1_fixed.py
+- Intel Core Ultra 5 225F (Lunar Lake) with AI Boost NPU
+- Intel Arc B580 (12 GB)
+- NVIDIA RTX 5060 (8 GB, via llama.cpp Vulkan backend for some smoke tests)
+- WSL2 Ubuntu 24.04 (xpu_venv) for quantization, native Windows 11
+  (ovvenv) for OpenVINO export and NPU/GPU/CPU evaluation
 
-# v2: Jaccard + eigenspectrum diagnostics
-python boolean_fourier/phase1/phase1_v2_diagnostics.py
-```
-
-**Phase 2 (Routing):**
-```bash
-# v1: All 16 operations with identity initialization
-python boolean_fourier/phase2/train_phase2_all16.py
-
-# v2: Routing diagnostics (mHC manifold constraint)
-python boolean_fourier/phase2/phase2_v2_routing_diagnostics.py
-```
-
-**Phase 3 (n=3):**
-```bash
-# v1: Full 8-dim basis GD training
-python boolean_fourier/phase3/train_phase3_full_basis.py
-
-# v2: Jaccard + eigenspectrum (shows GD learns topology)
-python boolean_fourier/phase3/phase3_v2_jaccard_eigenspace.py
-```
-
-**Phase 4 (n=4):**
-```bash
-# v1: Spectral synthesis (WHT + MCMC)
-python boolean_fourier/phase4/spectral_synthesis_4var.py
-
-# v2: Warm-start experiment (4 conditions)
-python boolean_fourier/phase4/phase4_v2_warmstart_jaccard.py
-```
-
-**Run all 8 experiments:**
-```bash
-bash scripts/run_all_phases.sh
-```
-
-## Key Results
-
-| Phase | n | Method | Accuracy | Sparsity | Time |
-|-------|---|--------|----------|----------|------|
-| 1 | 2 | Gradient Descent | 100% | 50% | ~5 min |
-| 2 | 2 (16 ops) | mHC Routing | 100% | 50% | ~30 min |
-| 3 | 3 | GD + Enumeration | 100% | 41% | ~20 min |
-| 4 | 4 | WHT + MCMC | 100% | 36% | ~40 min |
-| 5 | 28 | Fast WHT | - | - | 1.4B coeffs/s |
-
-See the paper for detailed analysis and ablation studies.
-
-## Citation
-
-If you use this code in your research, please cite:
+## Citing
 
 ```bibtex
-@article{pavlov2026differentiable,
-  title={Differentiable Logic Synthesis: Spectral Coefficient Selection via Sinkhorn-Constrained Composition},
-  author={Pavlov, Gorgi},
-  journal={arXiv preprint arXiv:2601.13953},
-  year={2026}
+@misc{pavlov2026bbt,
+  title  = {The Banach-Butterfly Invariant: Influence-Adaptive Walsh Geometry
+            for Ternary Polynomial Threshold Functions},
+  author = {Gorgi Pavlov},
+  year   = {2026},
+  eprint = {arXiv:TBD},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
+}
+
+@misc{pavlov2026bbtquant,
+  title  = {Influence-Weighted Spectral Rotations for Extreme Low-Bit
+            LLM Quantization},
+  author = {Gorgi Pavlov},
+  year   = {2026},
+  eprint = {arXiv:TBD},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.LG}
 }
 ```
 
-## Related Projects
-
-- **[spectralbit](https://github.com/gogipav14/spectralbit)** - Production-ready Python package (`pip install spectralbit`)
-- **[spectral-llm-experiments](https://github.com/gogipav14/spectral-llm-experiments)** - Historical development iterations (archived)
-
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Gorgi Pavlov, Ph.D. - Lehigh University & Johnson and Johnson
-- This development was instigated by asking a series of questions and their quest led me here.
+MIT. See [`LICENSE`](LICENSE).
 
 ## Contact
 
-For questions or collaboration inquiries, please open an issue or contact gorgipavlov@gmail.com.
-
----
-
-**Note:** This is research code. For production use, see the [spectralbit](https://github.com/gogipav14/spectralbit) package.
+Gorgi Pavlov, Ph.D. — `gorgipavlov@gmail.com` · `gop214@lehigh.edu`

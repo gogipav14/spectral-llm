@@ -1,0 +1,9 @@
+{
+  "n": 3,
+  "num_functions_analyzed": 256,
+  "weighted_alignment_mean": 0.3144414992559524,
+  "weighted_alignment_std": 0.13450475154660751,
+  "weighted_alignment_median": 0.3333333333333333,
+  "unweighted_alignment_mean": 0.27408854166666663,
+  "unweighted_alignment_std": 0.12042511132712745
+}

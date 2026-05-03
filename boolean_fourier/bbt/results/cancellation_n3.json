@@ -1,0 +1,31 @@
+{
+  "n": 3,
+  "rho_stats": {
+    "mean": 0.5169270833333333,
+    "std": 0.2355547564670916,
+    "min": 0.0,
+    "max": 1.0
+  },
+  "vs_support": {
+    "pearson_r": 0.4163186021889343,
+    "pearson_p": 3.747114190248284e-12
+  },
+  "vs_margin": {
+    "pearson_r": -0.08641171245118291,
+    "pearson_p": 0.16807955871888222
+  },
+  "per_layer_stats": {
+    "layer_0": {
+      "rho_median_mean": 0.51171875,
+      "rho_median_std": 0.4260320362348793
+    },
+    "layer_1": {
+      "rho_median_mean": 0.513671875,
+      "rho_median_std": 0.424826014191674
+    },
+    "layer_2": {
+      "rho_median_mean": 0.525390625,
+      "rho_median_std": 0.4219789730094491
+    }
+  }
+}
