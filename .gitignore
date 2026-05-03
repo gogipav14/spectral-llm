@@ -1,5 +1,22 @@
 # Personal session state
 .claude/
+memory/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Virtualenvs (host-specific; do not commit)
+xpu_venv/
+ovvenv/
+venv/
+.venv/
+env/
 
 # Checkpoints (large binary files)
 checkpoints/
@@ -12,12 +29,7 @@ checkpoints_*/
 *_stdout.log
 *_pid.txt
 training*.log
-
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
+sweep_*.log
 
 # IDE
 .vscode/
@@ -36,12 +48,36 @@ Thumbs.db
 
 # Environment
 .env
-.venv/
-venv/
-env/
 
-# Large data files (optional - decide based on hosting strategy)
-# Uncomment if you want to exclude datasets from version control
-# v5/data/preprocessed/
-# *.npy
-# *.arrow
+# LaTeX intermediates (keep .tex and .pdf only)
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.toc
+paper/*.bbl
+paper/*.blg
+paper/*.synctex.gz
+paper/*.out
+
+# arXiv submission tarballs (built by `tar` on demand)
+paper/arxiv_*.tar.gz
+paper/spectral_llm_arxiv.tar.gz
+paper/spectral-llm-arxiv.tar.gz
+
+# Pre-existing manuscripts not part of the public trilogy
+paper/wht_llm_paper.*
+paper/SageH.bst
+paper/SageV.bst
+paper/sagej.cls
+paper/cover_letter.txt
+paper/submission_nai/
+
+# Experiment outputs > 5 MB (regenerate via scripts; commit smaller summaries)
+experiments/n4_min_support_mu.csv
+experiments/n5_min_support_mu.csv
+experiments/n5_npn_min_support.csv
+experiments/npn5_canonical.npy
+
+# Quantization output trees (regenerate via run_pipeline.py)
+boolean_fourier/llm_wht/results/
+out/

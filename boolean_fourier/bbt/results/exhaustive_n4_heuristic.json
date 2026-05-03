@@ -1,0 +1,22 @@
+{
+  "n": 4,
+  "num_functions": 65536,
+  "mask_method": "heuristic_thresholded_fourier",
+  "num_perfect_heuristic": 51200,
+  "heuristic_accuracy_mean": 0.986328125,
+  "correlation": {
+    "pearson_margin_sparsity": -0.008143207595565367,
+    "pearson_p_value": 0.06538990315724658,
+    "spearman_margin_sparsity": -0.0007307463185486769,
+    "spearman_p_value": 0.8686724398624144
+  },
+  "statistics": {
+    "margin_log2_min": -2.0,
+    "margin_log2_max": -0.0,
+    "margin_log2_mean": -1.294792890548706,
+    "total_influence_min": 0.0,
+    "total_influence_max": 4.0,
+    "support_mean": 12.85791015625,
+    "sparsity_mean": 0.196380615234375
+  }
+}
