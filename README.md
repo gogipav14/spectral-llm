@@ -7,7 +7,7 @@ analysis, mechanistic interpretability, and edge-deployable LLM quantization.
 Spectral-LLM/
 ├── paper/                         # arXiv-ready manuscripts
 │   ├── bbt_paper.tex              # The Banach-Butterfly Invariant (theory paper)
-│   ├── bbt_quant_paper.tex        # Influence-Weighted Spectral Rotations (LLM application)
+│   ├── bbt_quant_paper.tex        # Influence-Inspired Spectral Rotations (LLM application)
 │   └── draft_nai.tex              # Differentiable Logic Synthesis (under review)
 ├── boolean_fourier/               # All Python source
 │   ├── bbt_quant/                 # ★ The LLM-quantization toolkit
@@ -47,7 +47,7 @@ $\mu(f) = \prod_\ell 2^{-\mathrm{Inf}_\ell/(1+\mathrm{Inf}_\ell)}$.
   sampling. $\mu$ is a valid Schur-convex concentration invariant but not a
   universal monotone predictor of minimum support across $n$.
 
-### 2. Influence-Weighted Spectral Rotations for Extreme Low-Bit LLM Quantization — application paper [`paper/bbt_quant_paper.tex`]
+### 2. Influence-Inspired Spectral Rotations for Extreme Low-Bit LLM Quantization — application paper [`paper/bbt_quant_paper.tex`]
 
 A math-invariant pre-quantization transformation: WHT-rotate each linear
 layer's weight matrix and per-channel-scale by spectral activation energy
@@ -112,10 +112,15 @@ python -m boolean_fourier.bbt_quant.dequantize_autoround \
     --src ./out/smollm135/autoround \
     --dst ./out/smollm135/fp16
 
-# Evaluate (XPU / CUDA / CPU all supported)
-python -m boolean_fourier.bbt_quant.eval_windows \
-    --model-dir ./out/smollm135/fp16 --backend hf_xpu \
-    --device xpu --out ./out/smollm135/eval.json
+# Evaluate wikitext-2 PPL (canonical, provenance-recording evaluator).
+# Every result JSON records the live transformers/torch version, because
+# absolute W2 perplexity is sensitive to the modeling-code version.
+python -m boolean_fourier.bbt_quant.eval_ppl \
+    --model ./out/smollm135/fp16 --device xpu \
+    --out ./out/smollm135/eval.json
+# To reproduce the paper's headline numbers exactly, pin transformers==4.57.6
+# (see boolean_fourier/bbt_quant/requirements.txt) and add --paper-repro
+# (= --max-tokens 8192 --seqlen 1024).
 ```
 
 Five BBT modes are wired through `--bbt-mode`:
@@ -168,7 +173,7 @@ synthetic fixtures pulled directly from each architecture's modeling source.
 }
 
 @misc{pavlov2026bbtquant,
-  title  = {Influence-Weighted Spectral Rotations for Extreme Low-Bit
+  title  = {Influence-Inspired Spectral Rotations for Extreme Low-Bit
             LLM Quantization},
   author = {Gorgi Pavlov},
   year   = {2026},
