@@ -1,0 +1,29 @@
+# Pinned stack for reproducing the companion paper's W2A16 perplexity numbers.
+#
+# IMPORTANT: absolute extreme-low-bit (W2) perplexity is sensitive to the
+# transformers modeling-code version. The paper's headline numbers
+# (e.g. Qwen2.5-0.5B vanilla 119.31, BBT-spectral 50.22) reproduce *exactly*
+# with transformers==4.57.6. Newer transformers (5.x) changed the Qwen2 fp16
+# attention/RoPE path and give ~73 / ~38 for the same weights -- the relative
+# BBT improvement is stable (-48% to -58%) but the absolute numbers are not.
+# eval_ppl.py records the live transformers/torch version in every result JSON.
+#
+# This is the EVAL stack (paper-headline reproduction). The quantization side
+# (autoround_bbt.py) was run with the same auto-round version; on Intel XPU it
+# additionally needs intel-extension-for-pytorch + the auto-round XPU kernels.
+
+# --- core (pinned: reproduces paper headline) ---
+transformers==4.57.6
+auto-round==0.12.2
+torch>=2.4            # fp16 inference; XPU build (2.11.0+xpu) used on Arc B580
+datasets>=2.19
+safetensors>=0.4
+numpy>=1.26,<3
+
+# --- optional: OpenVINO export + NPU/GPU/CPU device eval (Windows ovvenv) ---
+# optimum-intel>=1.20
+# openvino>=2024.4
+# openvino-tokenizers
+
+# --- optional: concentration-index analysis (compute_gini_hhi.py) ---
+# (uses numpy only, already listed above)

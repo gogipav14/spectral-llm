@@ -27,7 +27,7 @@ preferred-citation:
   journal: "arXiv preprint"
 references:
   - type: article
-    title: "Influence-Weighted Spectral Rotations for Extreme Low-Bit LLM Quantization"
+    title: "Influence-Inspired Spectral Rotations for Extreme Low-Bit LLM Quantization"
     authors:
       - family-names: Pavlov
         given-names: Gorgi
