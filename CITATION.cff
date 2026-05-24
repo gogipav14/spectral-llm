@@ -6,7 +6,7 @@ authors:
   - family-names: Pavlov
     given-names: Gorgi
     email: gorgipavlov@gmail.com
-    affiliation: "Lehigh University & Johnson and Johnson"
+    affiliation: "Lehigh University"
 repository-code: "https://github.com/gogipav14/spectral-llm"
 url: "https://github.com/gogipav14/spectral-llm"
 license: MIT
